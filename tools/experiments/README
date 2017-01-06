@@ -1,0 +1,1 @@
+These tools make it easy to run experiments, monitor the cluster, and record the output. Have a look at example.sh. nmon has to be in the path.

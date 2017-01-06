@@ -1,0 +1,99 @@
+The installation instructions are for Linux.
+
+The built scripts will search for dependencies in ~/local first, so
+all dependencies can be installed without administrator rights.
+
+1. Install cmake (provided as package "cmake" in every distribution)
+   Version 2.8.3 or higher is needed!
+
+2. Install mpich2 (>= 1.3.2p1). 
+   a) Use a package from your distribution (mpich2 & libmpich2-dev)
+   b) Download source code from http://www.mcs.anl.gov/research/projects/mpich2/
+      and perform the following steps:
+      - unpack to ~local/src/mpich2/ and cd to this directory
+      - run ./configure --enable-shared --prefix=/home/<your-login>/local --enable-mpe 
+      - run make
+      - run make install
+      - add ~/local/bin to your path (to the front)
+
+3. Install a recent version of Boost (>= 1.47). (tested with 1.55) 
+   a) Use package "libboost-dev" from your Linux distribution, if recent enough.
+   b) Download source code from http://www.boost.org/ and perform the following
+      steps:
+      - unpack to ~/local/src/boost_1_44_0 and cd to this directory
+      - run ./bootstrap.sh
+      - edit project-config.jam and modify the lines below:
+      		option.set prefix : /home/<your-login>/local ;
+			option.set exec-prefix : /home/<your-login>/local ;
+			option.set libdir : /home/<your-login>/local/lib ;
+			option.set includedir : /home/<your-login>/local/include ;
+      - edit tools/build/v2/user-config.jam (or tools/build/example/user-config.jam) and add the line
+      		using mpi ;
+      - edit boost/mpi/config.hpp and uncomment the line
+            #define BOOST_MPI_HOMOGENEOUS
+	  - run ./b2 install
+
+4. Install the log4cxx library. 
+	a) Use a package from your distribution (log4cxx & log4cxx-dev OR liblog4cxx10 & liblog4cxx10-dev)
+	b) Download source code from http://logging.apache.org/log4cxx/download.html
+       and perform the following steps:
+       - unpack to ~/local/src/apache-log4cxx-0.10.0
+       - run ./configure --prefix=/home/<your-login>/local
+       - run make               (if this fails, see TROUBLESHOOTING below)
+       - run make install
+
+5. Install other required libraries using a package from your distribution
+        - LAPACK (liblapack-dev, libf2c-dev)
+        - GNU scientific library (libgsl0-dev)
+	
+6. Install the mpi2 library (skip the "build boost" step). You can find the mpi2 library at https://github.com/uma-pi1/mpi2.
+   - If the steps above have been performed, just go to the mpi2 directory and run "localinstall.sh"
+
+7. Install ccache
+   - Use a package from your distribution (ccache)   
+
+8. To build, Cd to <mf-root>/build, then run
+   - For optimized build (default; release with CPU-specific optimizations): cmake -DCMAKE_BUILD_TYPE=NativeRelease ../
+   - For generic release (release without CPU-specific optimizations): cmake -DCMAKE_BUILD_TYPE=Release ../
+   - For development (never use to measure runtime!): cmake -DCMAKE_BUILD_TYPE=Debug ../
+   - make
+
+   After the build is successful, the project can be imported into Eclipse
+   (project file is in root directory).
+
+8. (Optionally) Run doxygen in the main directory to create documentation files.   
+   
+   
+   
+TROUBLESHOOTING
+
+- If cmake does not find the system's MPI library, you can hint it as follows:
+    cmake -DMPI_INCLUDE_PATH=/usr/include/mpich2/ -DMPI_LIBRARY=/usr/lib/libmpi.so ../
+
+- If you get relocation errors, try compiling/installing boost with:
+  ./bjam --v2 cxxflags=-fPIC install
+
+- mf library may not compile with gcc-4.5 or newer
+  This is a bug in gcc; hopefully fixed in next versions. Fallback is to use gcc-4.4.
+   * install packages gcc-4.4, g++-4.4, c++-4.4 on your system
+   * Either
+      1) Change the default compiler (recommended)
+            sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.4 40
+            sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.4 40
+     2) add the following lines to your environment (or your ~/.bashrc file)
+            export MPICH_CC=/usr/bin/gcc-4.4
+            export MPICH_CXX=/usr/bin/g++-4.4
+   * test by checking "mpicc --version" and "mpicxx --version"
+
+- log4cxx doesn't compile on new gcc versions.
+  To fix, add "#include <string.h>" to each of the following files: 
+    * src/main/cpp/inputstreamreader.cpp:66: error: 'memmove' was not declared in this scope
+    * src/main/cpp/socketoutputstream.cpp:52: error: 'memcpy' was not declared in this scope
+    * src/examples/cpp/console.cpp:63: error: 'strcmp' was not declared in this scope
+
+- Boost libraries not found when using DEBUG build: Build boost with
+  ./bjam --variant=debug --layout=versioned --threading=multi install
+  ./bjam --variant=release --layout=versioned --threading=multi install
+  
+- If you see a std::bad_alloc with ALS, try installing libatlas.* and rebuild from scratch
+  (this seems to be some bug in lapack)

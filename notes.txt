@@ -1,0 +1,72 @@
+This project contains code performing matrix factorizations in a parallel and distributed fashion. 
+
+1. Related publications (pdf files can be found in folder publications):
+
+R. Gemulla, P. J. Haas, Y. Sismanis, C. Teflioudi, F. Makari
+Large-Scale Matrix Factorization with Distributed Stochastic Gradient Descent.
+In NIPS 2011 Biglearn workshop, 2011. 
+
+C. Teflioudi, F. Makari, R. Gemulla
+Distributed Matrix Completion. 
+In ICDM, 2012.
+
+F. Makari, C. Teflioudi, R. Gemulla, P. J. Haas, Y. Sismanis
+Shared-Memory and Shared-Nothing Stochastic Gradient Descent Algorithms for Matrix Completion. 
+In KAIS, 2013
+
+2. Installation
+Follow the instructions in file INSTALL
+
+3. How to create toy synthetic data
+cd to build/examples/chteflio)
+./generateSyntheticData
+
+The script generateSyntheticData will generate in /tmp:
+- a matrix with training data: train.mmc
+- a matrix with test data: test.mmc
+- 2 initial factor matrices: W.mma and H.mma
+
+4. Examples
+You can find examples of scripts using  different methods in the folder examples/mf
+
+
+5. Tools
+In the folder build/tools you can find tools that can run factorization from the command line. The usual parameters are:
+
+--input-file: the matrix with the training data. E.g., /tmp/train.mmc
+--input-test-file: the matrix with the test data. E.g., /tmp/test.mmc
+--input-row-file: the matrix with the initial row factors. E.g., /tmp/W.mma 
+--input-col-file: the matrix with the initial column factors. E.g., /tmp/H.mma
+--tasks-per-rank: the number of threads to work per machine. E.g., 2
+--epochs: the number of iterations (passes over all the training data points). E.g.: 20
+--update: the update that needs to be performed. "Nzsl_Nzl2(1)" means Non-Zero-Squared-Loss with weighted L2 regularization and regularization parameter=1 as objective function.
+--loss: the loss function to report after each epoch. E.g., "Nzsl_Nzl2(1)"
+--regularize: This is experimental. Please always keep it ="None"
+--rank: the rank of the factorization. E.g, 10, 50, 100
+--decay: the step size selection mechanism. E.g. "BoldDriver(0.01)" will use BoldDriver (plese refer to our publication for a reference on how BoldDriver works) with initial step size = 0.01
+
+
+
+
+
+Example invocations:
+DSGD++
+To run DSGD++ locally with 2 threads
+./mfdsgdpp --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)" --epochs=3
+
+To use MPI to distribute on many machines (substitute localhost with the machine names)
+mpirun --hosts localhost,localhost ./mfdsgdpp --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)"
+
+PSGD (HOGWILD) with L2 regularization (can run parallel but not distributed)
+./psgdL2NoLock --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2
+
+ALS (can run both parallel and distributed)
+mpirun --hosts localhost,localhost ./mfdap --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=1  --loss="Nzsl_Nzl2(1)" --epochs=3
+
+ASGD (can run distributed. Its parallel version is equal to PSGD)
+mpirun --hosts localhost,localhost ./mfasgd --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=1 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)" --rank=10
+
+6. Contributors
+Rainer Gemulla
+Faraz Makari
+Christina Teflioudi
