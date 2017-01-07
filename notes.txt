@@ -18,7 +18,7 @@ In KAIS, 2013
 Follow the instructions in file INSTALL
 
 3. How to create toy synthetic data
-cd to build/examples/chteflio)
+cd to build/tools)
 ./generateSyntheticData
 
 The script generateSyntheticData will generate in /tmp:
@@ -57,14 +57,19 @@ To run DSGD++ locally with 2 threads
 To use MPI to distribute on many machines (substitute localhost with the machine names)
 mpirun --hosts localhost,localhost ./mfdsgdpp --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)"
 
-PSGD (HOGWILD) with L2 regularization (can run parallel but not distributed)
-./psgdL2NoLock --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2
+PSGD (HOGWILD) with weighted L2 regularization (can run parallel but not distributed)
+./psgdNZL2NoLock --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2
 
 ALS (can run both parallel and distributed)
 mpirun --hosts localhost,localhost ./mfdap --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=1  --loss="Nzsl_Nzl2(1)" --epochs=3
 
 ASGD (can run distributed. Its parallel version is equal to PSGD)
 mpirun --hosts localhost,localhost ./mfasgd --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=1 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)" --rank=10
+
+CSGD  (can run parallel but not distributed)
+./stratified-psgd --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc  --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --eps0=0.001 --cache=256
+
+
 
 6. Contributors
 Rainer Gemulla

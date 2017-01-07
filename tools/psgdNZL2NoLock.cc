@@ -86,9 +86,9 @@ int main(int argc, char* argv[]) {
 				("help", "produce help message")
 				("epochs", value<mf_size_type>(&epochs)->default_value(10), "number of epochs to run [10]")
 				("lambda", value<double>(&lambda)->default_value(0.05), "lambda")
-				("eps0", value<double>(&eps0)->default_value(0.01), "eps0")
-				("tasks", value<int>(&tasks)->default_value(1), "number of concurrent tasks [1]")
-				("tasks-per-rank", value<string>(&traceFile)->default_value("trace.R"), "filename of trace [trace.R]")
+				("eps0", value<double>(&eps0)->default_value(0.01), "initial step size for BoldDriver"))
+				("tasks-per-rank", value<int>(&tasks)->default_value(1), "number of concurrent tasks [1]")
+				("trace", value<string>(&traceFile)->default_value("trace.R"), "filename of trace [trace]")
 				("traceVar", value<string>(&traceVar)->default_value("trace"), "variable name for trace [traceVar]")
 				("input-file", value<string>(&inputMatrixFile), "input matrix")
 				("input-test-file", value<string>(&inputTestMatrixFile), "input test matrix")
@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 
 		// parameters for SGD
 		SgdOrder order = SGD_ORDER_WOR;
-		Update update = Update(UpdateNzslNzl2(lambda), -1000, 1000); // truncate for numerical stability
+		Update update = Update(UpdateNzslNzl2(lambda), -100, 100); // truncate for numerical stability
 		Regularize regularize;
 		Loss loss((NzslLoss()), Nzl2Loss(lambda));
 		TestLoss testLoss;

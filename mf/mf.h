@@ -113,6 +113,7 @@
 #include <mf/sgd/asgd.h>
 #include <mf/sgd/dsgd.h>
 #include <mf/sgd/dsgdpp.h>
+#include <mf/sgd/mystratifiedpsgd.h>
 
 #include <mf/sgd/decay/decay_auto.h>
 

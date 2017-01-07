@@ -4,6 +4,6 @@ file(COPY "${MF_SOURCE_DIR}/log4j.properties" DESTINATION "${CMAKE_CURRENT_BINAR
 add_subdirectory(mpi2)
 add_subdirectory(mf)
 #add_subdirectory(rgemulla EXCLUDE_FROM_ALL)
-add_subdirectory(chteflio EXCLUDE_FROM_ALL)
+#add_subdirectory(chteflio EXCLUDE_FROM_ALL)
 #add_subdirectory(fmakari EXCLUDE_FROM_ALL)
 

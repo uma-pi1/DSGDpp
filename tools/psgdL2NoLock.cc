@@ -66,6 +66,8 @@ int main(int argc, char* argv[]) {
 		string inputMatrixFile;
 		string inputRowFacFile;
 		string inputColFacFile;
+		string outputRowFacFile;
+		string outputColFacFile;
 		string inputTestMatrixFile;
 		string traceFile,traceVar;
 		string shuffleStr;
@@ -81,7 +83,7 @@ int main(int argc, char* argv[]) {
 				("help", "produce help message")
 				("epochs", value<mf_size_type>(&epochs)->default_value(10), "number of epochs to run [10]")
 				("lambda", value<double>(&lambda)->default_value(50), "lambda")
-				("eps0", value<double>(&eps0)->default_value(0.01), "eps0")
+				("eps0", value<double>(&eps0)->default_value(0.01), "initial step size for BoldDriver")
 				("tasks-per-rank", value<int>(&tasks)->default_value(1), "number of concurrent tasks [1]")
 				("trace", value<string>(&traceFile)->default_value("trace.R"), "filename of trace [trace.R]")
 				("traceVar", value<string>(&traceVar)->default_value("trace"), "variable name for trace [traceVar]")
@@ -89,6 +91,8 @@ int main(int argc, char* argv[]) {
 				("input-test-file", value<string>(&inputTestMatrixFile), "input test matrix")
 			    ("input-row-file", value<string>(&inputRowFacFile), "input initial row factor")
 			    ("input-col-file", value<string>(&inputColFacFile), "input initial column factor")
+			    ("output-row-file", value<string>(&outputRowFacFile), "output initial row factor")
+			    ("output-col-file", value<string>(&outputColFacFile), "output initial column factor")
 			    ("shuffle",value<string>(&shuffleStr)->default_value("seq"),"shuffle method eg seq, par, parAdd")
 				;
 
@@ -135,7 +139,7 @@ int main(int argc, char* argv[]) {
 
 		// parameters for SGD
 		SgdOrder order = SGD_ORDER_WOR;
-		Update update = Update(UpdateNzslL2(lambda), -1000, 1000); // truncate for numerical stability
+		Update update = Update(UpdateNzslL2(lambda), -100, 100); // truncate for numerical stability
 		Regularize regularize;
 		Loss loss((NzslLoss()), L2Loss(lambda));
 		TestLoss testLoss;
@@ -173,6 +177,20 @@ int main(int argc, char* argv[]) {
 		// write trace to an R file
 		LOG4CXX_INFO(logger, "Writing trace to " << traceFile);
 		trace.toRfile(traceFile, traceVar);
+		
+					// write computed factors to file
+				if (outputRowFacFile.length() > 0) {
+					LOG4CXX_INFO(logger, "Writing row factors to " << outputRowFacFile);
+					//DenseMatrix w0;
+					//unblock(dw, w0);
+					writeMatrix(outputRowFacFile, w);
+				}
+				if (outputColFacFile.length() > 0) {
+					LOG4CXX_INFO(logger, "Writing column factors to " << outputColFacFile);
+					//DenseMatrixCM h0;
+					//unblock(dh, h0);
+					writeMatrix(outputColFacFile, h);
+				}
 	}
 
 	mfStop();
