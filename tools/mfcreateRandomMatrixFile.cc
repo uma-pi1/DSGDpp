@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
 		("noise", value<string>(&args.noise), "distribution of noise (e.g., \"Normal(0,1)\", \"Uniform(-1,1)\")")
 		("blocks1", value<int>(&args.blocks1), "number of row-blocks to generate")
 		("blocks2", value<int>(&args.blocks2), "number of column-blocks to generate")
-		("output-file", value<string>(&args.outFilename), "output file (extension .sdf)")
+		("output-file", value<string>(&args.outFilename), "output file (extension .rm)")
 	;
 	positional_options_description pdesc;
 	pdesc.add("output-file", 1);

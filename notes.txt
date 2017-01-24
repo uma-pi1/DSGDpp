@@ -69,9 +69,33 @@ mpirun --hosts localhost,localhost ./mfasgd --input-file=/tmp/train.mmc --input-
 CSGD  (can run parallel but not distributed)
 ./stratified-psgd --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc  --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --eps0=0.001 --cache=256
 
+6. Generation of very large data matrices on the fly.
+Use the tool mfcreateRandomMatrixFile.  This tool creates a file descriptor for generating synthetic matrices on the fly  in a parallel or distributed manner.
+For a given experiment you will need 2 such files: (i) a file containing the original factors + the data matrix + the test matrix (optionally) 
+(ii) a file containing the starting points (initial factors). 
+
+E.g.:
+
+./mfcreateRandomMatrixFile --size1=1000000 --size2=1000000 --nnz=10000000 --nnzTest=1000000 --rank=10 --values="Normal(0,10)" --noise="Normal(0,1)" --blocks1=10 --blocks2=10 --output-file=/tmp/synthetic.rm
+Will create (i) and 
+./mfcreateRandomMatrixFile --size1=1000000 --size2=1000000  --rank=10 --values="Uniform(-1,1)" --blocks1=10 --blocks2=10 --output-file=/tmp/syntheticFactors.rm
+will create (ii).
 
 
-6. Contributors
+We can then call DSGDpp as:
+mpirun --hosts localhost,localhost ./mfdsgdpp --input-file=/tmp/synthetic.rm --input-test-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)"
+
+
+
+Before creating a file take into consideration the following: 
+(1) parallelization happens in row-chunk manner. Please make sure that the blocks1 dimension is enough fine-grained, so that the threads of each node will have enough row-blocks to work on. 
+(2) make sure that the blocks1, blocks2 values are at least as much as the most fine-blocked matrix that you want your file to be able to create. 
+(3) blocks_in_file mod blocks_of_the_matrix = 0. 
+(4) rows/columns_of_the_matrix mod blocks_in_file = 0.
+
+
+
+7. Contributors
 Rainer Gemulla
 Faraz Makari
 Christina Teflioudi
