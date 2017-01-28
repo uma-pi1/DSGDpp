@@ -28,6 +28,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/math/distributions/normal.hpp>
 #include <boost/random/uniform_real.hpp>
+#include <mf/matrix/io/generateDistributedMatrix.h>
 
 #include <util/evaluation.h>
 
@@ -129,13 +130,27 @@ int main(int argc, char* argv[]) {
 
 		// Read matrices
 		Random32 random;
-		SparseMatrix v,vTest;
-		DenseMatrix w;
-		DenseMatrixCM h;
-		readMatrix(inputMatrixFile,v);
-		readMatrix(inputTestMatrixFile,vTest);
-		readMatrix(inputRowFacFile,w);
-		readMatrix(inputColFacFile,h);
+// 		SparseMatrix v,vTest;
+// 		DenseMatrix w;
+// 		DenseMatrixCM h;
+// 		readMatrix(inputMatrixFile,v);
+// 		readMatrix(inputTestMatrixFile,vTest);
+// 		readMatrix(inputRowFacFile,w);
+// 		readMatrix(inputColFacFile,h);
+		
+		std::cout<<"Reading Data"<<std::endl;
+		std::vector<DistributedSparseMatrix> dataVector=getDataMatrices<SparseMatrix>(inputMatrixFile,"V",true,
+				tasks, 1, 1, 1, true, false, &inputTestMatrixFile);
+
+		SparseMatrix& v = *mpi2::env().get<SparseMatrix>(dataVector[0].blocks()(0,0).var());
+		SparseMatrix& vTest = *mpi2::env().get<SparseMatrix>(dataVector[1].blocks()(0,0).var());
+
+	  	std::cout<<"Reading Factors"<<std::endl;
+		std::pair<DistributedDenseMatrix, DistributedDenseMatrixCM> factorsPair= getFactors(inputRowFacFile,
+			inputColFacFile,  tasks, 1, 1, 1, true);
+		
+		DenseMatrix w = *mpi2::env().get<DenseMatrix>(factorsPair.first.blocks()(0,0).var());
+		DenseMatrixCM h = *mpi2::env().get<DenseMatrixCM>(factorsPair.second.blocks()(0,0).var());
 
 		// parameters for SGD
 		SgdOrder order = SGD_ORDER_WOR;

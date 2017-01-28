@@ -31,7 +31,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/math/distributions/normal.hpp>
 #include <boost/random/uniform_real.hpp>
-
+#include <mf/matrix/io/generateDistributedMatrix.h>
 #include <mpi2/mpi2.h>
 #include <mf/mf.h>
 
@@ -192,23 +192,42 @@ int main(int argc, char* argv[]) {
 		
 		
 		///////////////////////////////////////
+		
+
 
 		Random32 random; // note: this takes a default seed (not randomized!)
 
-		SparseMatrix v;
-		readMatrix(inputMatrixFile, v, MM_COORD);
+// 		SparseMatrix v;
+// 		readMatrix(inputMatrixFile, v, MM_COORD);
+
+		
+// 		SparseMatrix vTest;
+// 		readMatrix(inputTestMatrixFile, vTest, MM_COORD);
+// 
+// 		DenseMatrix w;
+// 		readMatrix(inputRowFacFile, w, MM_ARRAY);
+// 		DenseMatrixCM h;
+// 		readMatrix(inputColFacFile, h, MM_ARRAY);
+		
+		std::cout<<"Reading Data"<<std::endl;
+		std::vector<DistributedSparseMatrix> dataVector=getDataMatrices<SparseMatrix>(inputMatrixFile,"V",true,
+				tasks, 1, 1, 1, true, false, &inputTestMatrixFile);
+
+		SparseMatrix& v = *mpi2::env().get<SparseMatrix>(dataVector[0].blocks()(0,0).var());
+		SparseMatrix& vTest = *mpi2::env().get<SparseMatrix>(dataVector[1].blocks()(0,0).var());
+
+	  	std::cout<<"Reading Factors"<<std::endl;
+		std::pair<DistributedDenseMatrix, DistributedDenseMatrixCM> factorsPair= getFactors(inputRowFacFile,
+			inputColFacFile,  tasks, 1, 1, 1, true);
+		DenseMatrix w = *mpi2::env().get<DenseMatrix>(factorsPair.first.blocks()(0,0).var());
+		DenseMatrixCM h = *mpi2::env().get<DenseMatrixCM>(factorsPair.second.blocks()(0,0).var());
+		
 		mf_size_type nnz = v.nnz();
 		SparseMatrix::index_array_type& vIndex1 = rowIndexData(v);
 		SparseMatrix::index_array_type& vIndex2 = columnIndexData(v);
 		SparseMatrix::value_array_type& vValues = v.value_data();
 		
-		SparseMatrix vTest;
-		readMatrix(inputTestMatrixFile, vTest, MM_COORD);
-
-		DenseMatrix w;
-		readMatrix(inputRowFacFile, w, MM_ARRAY);
-		DenseMatrixCM h;
-		readMatrix(inputColFacFile, h, MM_ARRAY);
+		
 
 		// global variables
 		size1 = v.size1();

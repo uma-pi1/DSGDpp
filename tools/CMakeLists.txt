@@ -24,4 +24,5 @@ add_executable(stratified-psgd stratified-psgd.cc)
 
 add_executable(mfcreateInitialFactors mfcreateInitialFactors.cc)
 add_executable(generateSyntheticData generateSyntheticData.cc)
+add_executable(averageOutMatrix averageOutMatrix.cc)
 

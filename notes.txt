@@ -93,9 +93,49 @@ Before creating a file take into consideration the following:
 (3) blocks_in_file mod blocks_of_the_matrix = 0. 
 (4) rows/columns_of_the_matrix mod blocks_in_file = 0.
 
+7. Experiments with Syn1B-sq.
+
+7a. Generation of the matrices:
+
+./mfcreateRandomMatrixFile --size1=3379200 --size2=3072000 --nnz=1000000000 --nnzTest=1000000 --rank=50 --values="Normal(0,3.1622)" --noise="Normal(0,1)" --blocks1=256 --blocks2=256 --output-file=/tmp/synthetic.rm
+notice that the blocks1 and blocks2 should support the largest stratification that you will use (see paragraph 6)
+./mfcreateRandomMatrixFile --size1=3379200 --size2=3072000  --rank=50 --values="Uniform(-0.5,0.5)" --blocks1=256 --blocks2=256 --output-file=/tmp/syntheticFactors.rm
+
+7b. Experiments:
+e.g., DSGD++ 4 machines with 8 threads each
+mpirun --hosts host1,host2,host3,host4 \
+./mfdsgdpp --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
+--tasks-per-rank=8 --rank=50 --update="Nzsl" --regularize="None" --loss="Nzsl" --truncate="(-100,100)" --decay="BoldDriver(0.000625)" --epochs=60 --stratum-order="WOR" \
+--trace /tmp/synthetic.dsgdpp4x8.trace.R --trace-var synthetic.dsgdpp4x8 
+
+e.g., ALS 4 machines with 8 threads each
+mpirun --hosts host1,host2,host3,host4 \
+./mfdap --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
+--tasks-per-rank=8  --loss="Nzsl" --epochs=60 \
+--trace /tmp/synthetic.dals4x8.trace.R --trace-var synthetic.dals4x8 
+
+e.g., ASGD 4 machines with 8 threads each
+mpirun --hosts host1,host2,host3,host4 \
+./mfasgd --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
+--tasks-per-rank=8 --update="Nzsl" --regularize="None" --loss="Nzsl" --truncate="(-100,100)" --decay="BoldDriver(0.000625)" --rank=50 --epochs=60 --average-deltas=1 \
+--trace /tmp/synthetic.asgd4x8.trace.R --trace-var synthetic.asgd4x8 
+
+e.g., DSGD MapReduce-style 4 machines with 8 threads each
+mpirun --hosts host1,host2,host3,host4 \
+./mfdsgd --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
+--tasks-per-rank=8 --rank=50 --update="Nzsl" --regularize="None" --loss="Nzsl" --truncate="(-100,100)" --decay="BoldDriver(0.000625)" --epochs=60 --map-reduce=1 --stratum-order="WOR" \
+--trace /tmp/synthetic.dsgdMR4x8.trace.R --trace-var synthetic.dsgdMR4x8 
+
+e.g. PSGD with 8 threads
+./psgdNZL2NoLock --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
+--tasks-per-rank=8 --lambda=0  --eps0=0.000625 --epochs=60 --shuffle="parAdd" 
+
+e.g. CSGD with 8 threads
+./stratified-psgd --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
+--tasks-per-rank=8 --eps0=0.000625 --cache=256 --epochs=60 --lambda=0 
 
 
-7. Contributors
+8. Contributors
 Rainer Gemulla
 Faraz Makari
 Christina Teflioudi
