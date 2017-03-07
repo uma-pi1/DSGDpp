@@ -96,7 +96,7 @@ SET(INCLUDE_INSTALL_DIR include)
 
 # go
 configure_file("${MF_SOURCE_DIR}/log4j.properties" "${CMAKE_CURRENT_BINARY_DIR}/")
-add_subdirectory(mpi2)
+
 add_subdirectory(mf)
 add_subdirectory(tools)
 add_subdirectory(examples)

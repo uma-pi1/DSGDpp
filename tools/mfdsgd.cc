@@ -24,11 +24,7 @@
 #include <tools/detail/mfdsgd-run.h>
 #include <tools/detail/mfdsgd-generated.h>
 
-// added by me ******************
-//#include "parse.h"
-#include <tools/parse.h>
-
-//*******************************
+#include "parse.h"
 log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("main"));
 
 int main(int argc, char *argv[]) {

@@ -17,21 +17,13 @@
  */
 
 #include <set>
-
 #include <algorithm>
-
 #include "mystratifiedpsgd.h"
-
 #include <mf/matrix/op/shuffle.h>
 #include <stdint.h>
 
 namespace mf {
-  
-  uint64_t get_cpu_cycle_counter(){
-    unsigned int lo,hi;
-    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
-    return ((uint64_t)hi << 32) | lo;
-}
+
 
 template<typename Update, typename Regularize, typename Loss,
 	typename AdaptiveDecay,typename TestData,typename TestLoss>
@@ -101,7 +93,6 @@ inline void myPermute(rg::Random32& random, std::vector<mf_size_type>& permutati
 		std::swap(permutation[begin + nextStep - 1], permutation[currentIndex]);
 	}
 	// last element does not need to be swapped
-
 }
 
 
@@ -122,10 +113,6 @@ struct StratifiedPsgdUpdateWorTask {
 		double eps;
 		mpi2::PointerIntType pJob, pPermutation, pOffsets;
 		
-		
-
-		
-
 		ch.recv(*mpi2::unmarshal(pJob, pPermutation));
 		ch.recv(*mpi2::unmarshal(pOffsets, eps));
 		
@@ -133,7 +120,7 @@ struct StratifiedPsgdUpdateWorTask {
 		StratifiedPsgdJob<Update, Regularize>& job = *mpi2::intToPointer<StratifiedPsgdJob<Update, Regularize> >(pJob);
 		std::vector<mf_size_type>& permutation = *mpi2::intToPointer<std::vector<mf_size_type> >(pPermutation);
 		std::vector<mf_size_type>& offsets = *mpi2::intToPointer<std::vector<mf_size_type> >(pOffsets);
-// 		std::cout<<"got data. offsets: "<<offsets.size() <<std::endl;
+
 
 		mf_size_type d = sqrt(offsets.size());
 		mf_size_type blocksPerTask = offsets.size() / tasks;
@@ -150,28 +137,24 @@ struct StratifiedPsgdUpdateWorTask {
 			schedule[i] = i;
 		}
 		SgdRunner::permute(random, schedule, blocksPerTask, blocksPerTask);// wor stratum schedule
-// 		std::cout<<"permute schedule ok. blocksPerTask: "<<blocksPerTask<<std::endl;
+
 
 		// permute training points inside each block
 		mf_size_type begin = offsets[id*blocksPerTask];
 		mf_size_type end = offsets[(id+1)*blocksPerTask] -1;
 
-// 		std::cout<<"begin end ok "<<std::endl;
 
 		DecayConstant decay(eps);
 		for (mf_size_type s = 0; s < blocksPerTask; s++) {
 			mf_size_type blockBegin = offsets[(id*blocksPerTask) + schedule[s]];
 			mf_size_type blockEnd = offsets[(id*blocksPerTask) + schedule[s] + 1] -1;
 			
-// 			std::cout<<"s: "<<s<<" schedule[s]: "<<schedule[s]<<" id*blocksPerTask: "<<id*blocksPerTask <<" blockBegin: "<<blockBegin<<" blockEnd: "<<blockEnd<<std::endl;
+
 			if(blockBegin <  blockEnd){
 			  	myPermute(random, permutation, blockBegin, blockEnd);// WOR for training point selection
 				SgdRunner::updateWor(job, decay, random, blockBegin, blockEnd, 0, permutation);			  
 			}
-
-
 // 			barrier(channels);
-
 		}
 
 		
@@ -219,10 +202,7 @@ struct StratifiedPsgdUpdateSEQTask {
 		for (mf_size_type i = 0; i < blocksPerTask; i++) {
 			schedule[i] = i;
 		}
-// 		SgdRunner::permute(random, schedule, blocksPerTask, blocksPerTask);
-		
-		
-		
+// 		SgdRunner::permute(random, schedule, blocksPerTask, blocksPerTask);		
 
 		// permute training points inside each block
 		mf_size_type begin = offsets[id*blocksPerTask];
@@ -255,8 +235,7 @@ void StratifiedPsgdRunner::epoch(StratifiedPsgdJob<Update, Regularize>& job, dou
 	rg::Timer t;
 
 	std::vector<mf_size_type>& permutation = permutation_;
-	std::vector<mf_size_type>& offsets = offsets_;
-	
+	std::vector<mf_size_type>& offsets = offsets_;	
 
 	// fire up the tasks
 // 	std::vector<mpi2::Channel> channels;
@@ -264,17 +243,9 @@ void StratifiedPsgdRunner::epoch(StratifiedPsgdJob<Update, Regularize>& job, dou
 // 	if(job.order == SGD_ORDER_SEQ){
 // 	  tm.spawn<detail::StratifiedPsgdUpdateSEQTask<Update, Regularize> >(tm.world().rank(), tasks, channels, true);	  
 // 	}else{
-	  long long start_cycles, end_cycles, total_cycles;
-	  start_cycles = get_cpu_cycle_counter();
-	  tm.spawn<detail::StratifiedPsgdUpdateWorTask<Update, Regularize> >(tm.world().rank(), tasks, channels, true);	  
-	  
-	  
+	  tm.spawn<detail::StratifiedPsgdUpdateWorTask<Update, Regularize> >(tm.world().rank(), tasks, channels, true);	  	  
 // 	}
 	
-	
-	
-	
-
 	// send necessary data to each task
 	mpi2::seed(channels, random_);
 	mpi2::sendAll(channels, mpi2::marshal(mpi2::pointerToInt(&job), mpi2::pointerToInt(&permutation)));
@@ -282,9 +253,7 @@ void StratifiedPsgdRunner::epoch(StratifiedPsgdJob<Update, Regularize>& job, dou
 	
 
 	mpi2::economicRecvAll(channels, tm.pollDelay());
-	end_cycles = get_cpu_cycle_counter();
-	total_cycles = end_cycles-start_cycles;
-// 	std::cout<<"Cycles for this epoch: "<<total_cycles<<std::endl;
+
 
 }/**/
 
