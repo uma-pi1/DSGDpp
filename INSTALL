@@ -49,12 +49,14 @@ all dependencies can be installed without administrator rights.
 5. Install other required libraries using a package from your distribution
         - LAPACK (liblapack-dev, libf2c-dev)
         - GNU scientific library (libgsl0-dev)
+        
+6. Install ccache
+   - Use a package from your distribution (ccache)   
 	
-6. Install the mpi2 library (skip the "build boost" step). You can find the mpi2 library at https://github.com/uma-pi1/mpi2.
+7. Install the mpi2 library (skip the "build boost" step). You can find the mpi2 library at https://github.com/uma-pi1/mpi2.
    - If the steps above have been performed, just go to the mpi2 directory and run "localinstall.sh"
 
-7. Install ccache
-   - Use a package from your distribution (ccache)   
+
 
 8. To build, Cd to <mf-root>/build, then run
    - For optimized build (default; release with CPU-specific optimizations): cmake -DCMAKE_BUILD_TYPE=NativeRelease ../
