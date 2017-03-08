@@ -1,5 +1,9 @@
 The installation instructions are for Linux.
 
+TODO:
+after downloading MPI2, need to create empty build directory (same in DGSPpp)
+need to install ccache (change points 6 and 7)
+
 The built scripts will search for dependencies in ~/local first, so
 all dependencies can be installed without administrator rights.
 
