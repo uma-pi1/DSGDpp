@@ -76,7 +76,7 @@ struct WriteDistributedMatrixTask {
 
 template<typename M>
 void storeMatrix(const DistributedMatrix<M>& m, const BlockedMatrixFileDescriptor& f,
-		int tasksPerRank = 1) {
+		int tasksPerRank) {
 
 	// write blocks
 	boost::numeric::ublas::matrix<std::string> result;

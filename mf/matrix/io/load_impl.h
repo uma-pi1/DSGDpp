@@ -74,7 +74,7 @@ DistributedMatrix<M> loadMatrix(
 		const std::string& name, const boost::numeric::ublas::matrix<int>& blockLocations,
 		const std::vector<mf_size_type>& blockOffsets1, // can be empty
 		const std::vector<mf_size_type>& blockOffsets2, // can be empty
-		const std::string& fname, MatrixFileFormat format = AUTOMATIC) {
+		const std::string& fname, MatrixFileFormat format) {
 	if (blockLocations.size1() > 1 || blockLocations.size2() > 1) {
 		LOG4CXX_INFO(detail::logger, "File '" << fname << "' is not blocked; it will be "
 				"blocked automatically");
@@ -106,7 +106,7 @@ template<typename M>
 DistributedMatrix<M> loadMatrix(
 		const std::string& name, mf_size_type blocks1, mf_size_type blocks2,
 		bool partitionByRow,
-		const std::string& fname, MatrixFileFormat format = AUTOMATIC) {
+		const std::string& fname, MatrixFileFormat format) {
 	mpi2::TaskManager& tm = mpi2::TaskManager::getInstance();
 	boost::mpi::communicator& world = tm.world();
 	boost::numeric::ublas::matrix<int> blockLocations(blocks1,blocks2);

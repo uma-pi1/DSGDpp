@@ -111,7 +111,7 @@ struct ReadDistributedMatrixTask {
 
 template<typename M>
 DistributedMatrix<M> loadMatrix(const BlockedMatrixFileDescriptor& f, const std::string& name,
-		bool partitionByRow=true, int tasksPerRank = 1) {
+		bool partitionByRow, int tasksPerRank) {
 	// take the information needed from fileDescriptor
 
 	mf_size_type blocks1=f.blocks1;

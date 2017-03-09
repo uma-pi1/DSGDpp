@@ -294,7 +294,7 @@ void readBoostBin(const std::string& fname, Matrix& M) {
 } // namespace detail
 
 template<typename M>
-void readMatrix(const std::string& fname, M& m, MatrixFileFormat format = AUTOMATIC) {
+void readMatrix(const std::string& fname, M& m, MatrixFileFormat format) {
 	if (format == AUTOMATIC) {
 		format = getMatrixFormat(fname);
 	}
@@ -623,7 +623,7 @@ void readMatrixBlocks(
 		std::vector<mf_size_type>& blockOffsets1, std::vector<mf_size_type>& blockOffsets2,
 		mf_size_type& size1, mf_size_type& size2,
 		std::vector<M*>& blocks,
-		MatrixFileFormat format = AUTOMATIC) {
+		MatrixFileFormat format) {
 	detail::readMatrixBlocks<M, false>(fname, blocks1, blocks2, sortedBlockList,
 			blockOffsets1, blockOffsets2, size1, size2, blocks, format);
 }
@@ -636,7 +636,7 @@ void readMatrixBlocks(
 		std::vector<mf_size_type>& blockOffsets1, std::vector<mf_size_type>& blockOffsets2,
 		mf_size_type& size1, mf_size_type& size2,
 		std::vector<boost::numeric::ublas::coordinate_matrix<double, L, IB, IA, TA>*>& blocks,
-		MatrixFileFormat format = AUTOMATIC) {
+		MatrixFileFormat format) {
 	typedef boost::numeric::ublas::coordinate_matrix<double, L, IB, IA, TA> M;
 	detail::readMatrixBlocks<M, true>(fname, blocks1, blocks2, sortedBlockList,
 			blockOffsets1, blockOffsets2, size1, size2, blocks, format);

@@ -56,7 +56,7 @@ void IndexMapFileDescriptor::save(const std::string &filename) {
     pt.put("files.map1Filename", map1Filename);
     pt.put("files.map2Filename",map2Filename);
 
-    write_xml(filename, pt, std::locale(), boost::property_tree::xml_parser::xml_writer_make_settings(' ', 4));
+    write_xml(filename, pt, std::locale(), boost::property_tree::xml_parser::xml_writer_make_settings<std::basic_string<char> >(' ', 4));
 }
 
 }

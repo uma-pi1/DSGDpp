@@ -136,7 +136,7 @@ void RandomMatrixDescriptor::save(const std::string &filename) {
 	}
 
 
-	write_xml(filename, pt, std::locale(), boost::property_tree::xml_parser::xml_writer_make_settings(' ', 4));
+	write_xml(filename, pt, std::locale(), boost::property_tree::xml_parser::xml_writer_make_settings<std::basic_string<char> >(' ', 4));
 }
 
 void RandomMatrixDescriptor::calculateNnzPerBlock(boost::numeric::ublas::matrix<mf_size_type>& nnzPerChunk, mf_size_type nnz,

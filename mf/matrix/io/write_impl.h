@@ -134,7 +134,7 @@ void writeBoostBin(const std::string& fname, const Matrix& M) {
 } // namespace detail
 
 template<typename M>
-void writeMatrix(const std::string& fname, const M& m, MatrixFileFormat format = AUTOMATIC) {
+void writeMatrix(const std::string& fname, const M& m, MatrixFileFormat format) {
 	if (format == AUTOMATIC) {
 		format = getMatrixFormat(fname);
 	}

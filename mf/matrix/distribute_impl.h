@@ -78,7 +78,7 @@ void runTaskOnBlocks(const DistributedMatrix<M>& m,
 		boost::numeric::ublas::matrix<R>& result,
 		const F& construct,
 		const std::string& taskId,
-		int tasksPerRank=1, bool asyncRecv = true, int pollDelay = -1)
+		int tasksPerRank, bool asyncRecv, int pollDelay)
 {
 	mpi2::TaskManager& tm = mpi2::TaskManager::getInstance();
         if (pollDelay<0) pollDelay = tm.pollDelay();

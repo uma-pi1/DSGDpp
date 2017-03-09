@@ -1,41 +1,40 @@
 The installation instructions are for Linux.
 
-TODO:
-after downloading MPI2, need to create empty build directory (same in DGSPpp)
-need to install ccache (change points 6 and 7)
-
-The built scripts will search for dependencies in ~/local first, so
+The build scripts will search for dependencies in ~/local first, so
 all dependencies can be installed without administrator rights.
 
 1. Install cmake (provided as package "cmake" in every distribution)
    Version 2.8.3 or higher is needed!
 
 2. Install mpich2 (>= 1.3.2p1). 
-   a) Use a package from your distribution (mpich2 & libmpich2-dev)
+   a) Use a package from your distribution (mpich2 & libmpich2-dev; sometimes also
+      mpich & libmpich-dev)
    b) Download source code from http://www.mcs.anl.gov/research/projects/mpich2/
       and perform the following steps:
       - unpack to ~local/src/mpich2/ and cd to this directory
       - run ./configure --enable-shared --prefix=/home/<your-login>/local --enable-mpe 
-      - run make
+      - run make			
       - run make install
       - add ~/local/bin to your path (to the front)
 
-3. Install a recent version of Boost (>= 1.47). (tested with 1.55) 
-   a) Use package "libboost-dev" from your Linux distribution, if recent enough.
+3. Install a recent version of Boost (>= 1.47). (tested with 1.63) 
+   a) Use package "libboost-dev" from your Linux distribution, if recent enough and
+      built against mpich2 (and not openmpi).
    b) Download source code from http://www.boost.org/ and perform the following
       steps:
-      - unpack to ~/local/src/boost_1_44_0 and cd to this directory
+      - unpack to ~/local/src/boost_1_44 and cd to this directory
       - run ./bootstrap.sh
       - edit project-config.jam and modify the lines below:
       		option.set prefix : /home/<your-login>/local ;
 			option.set exec-prefix : /home/<your-login>/local ;
 			option.set libdir : /home/<your-login>/local/lib ;
 			option.set includedir : /home/<your-login>/local/include ;
-      - edit tools/build/v2/user-config.jam (or tools/build/example/user-config.jam) and add the line
+      - edit tools/build/v2/user-config.jam (on newer versions: create tools/build/src/user-config.jam)
+        and add the line:
       		using mpi ;
       - edit boost/mpi/config.hpp and uncomment the line
             #define BOOST_MPI_HOMOGENEOUS
-	  - run ./b2 install
+	- run ./b2 -j4 install (here -j4 means "use 4 cores")
 
 4. Install the log4cxx library. 
 	a) Use a package from your distribution (log4cxx & log4cxx-dev OR liblog4cxx10 & liblog4cxx10-dev)
@@ -54,15 +53,13 @@ all dependencies can be installed without administrator rights.
    - Use a package from your distribution (ccache)   
 	
 7. Install the mpi2 library (skip the "build boost" step). You can find the mpi2 library at https://github.com/uma-pi1/mpi2.
-   - If the steps above have been performed, just go to the mpi2 directory and run "localinstall.sh"
-
-
+   - If the steps above have been performed, just go to the mpi2 directory, create "build" subdirectory, and run "localinstall.sh"
 
 8. To build, Cd to <mf-root>/build, then run
    - For optimized build (default; release with CPU-specific optimizations): cmake -DCMAKE_BUILD_TYPE=NativeRelease ../
    - For generic release (release without CPU-specific optimizations): cmake -DCMAKE_BUILD_TYPE=Release ../
    - For development (never use to measure runtime!): cmake -DCMAKE_BUILD_TYPE=Debug ../
-   - make
+   - make	     	    (this takes a while)
 
    After the build is successful, the project can be imported into Eclipse
    (project file is in root directory).
@@ -79,8 +76,8 @@ TROUBLESHOOTING
 - If you get relocation errors, try compiling/installing boost with:
   ./bjam --v2 cxxflags=-fPIC install
 
-- mf library may not compile with gcc-4.5 or newer
-  This is a bug in gcc; hopefully fixed in next versions. Fallback is to use gcc-4.4.
+- mf library may not compile with gcc-4.5. This is a bug in gcc, which is already fixed in more recent versions.
+  One fallback is to use gcc-4.4.
    * install packages gcc-4.4, g++-4.4, c++-4.4 on your system
    * Either
       1) Change the default compiler (recommended)

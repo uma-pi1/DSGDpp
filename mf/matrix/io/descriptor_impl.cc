@@ -71,7 +71,7 @@ void BlockedMatrixFileDescriptor::save(const std::string &filename) {
 		}
 	}
 	pt.put("matrix.format", getExtension(format));
-	write_xml(filename, pt, std::locale(), boost::property_tree::xml_parser::xml_writer_make_settings(' ', 4));
+	write_xml(filename, pt, std::locale(), boost::property_tree::xml_parser::xml_writer_make_settings<std::basic_string<char> >(' ', 4));
 }
 
 
