@@ -135,7 +135,7 @@ void runFunctionPerAssignedBlock3(mpi2::Channel ch,
 
 	// receive work
 	std::vector<std::vector<mpi2::RemoteVar> > vars;
-	ch.recv(vars);
+	ch.recvAsync(vars);
 
 	// split the work into (vars, index) pairs:
 	// localVars: all required data is stored locally

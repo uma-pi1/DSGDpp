@@ -58,7 +58,7 @@ struct WriteDistributedMatrixTask {
 	static const std::string id() { return std::string("__mf/matrix/io/WriteDistributedMatrixTask_") + mpi2::TypeTraits<M>::name(); }
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<WriteDistributedMatrixTaskArg> args;
-		ch.recv(args);
+		ch.recvAsync(args);
 		std::vector<boost::mpi::request> reqs(args.size());
 		std::vector<std::string> results(args.size());
 		for (unsigned i=0; i<args.size(); i++) {

@@ -17,19 +17,19 @@ all dependencies can be installed without administrator rights.
       - run make install
       - add ~/local/bin to your path (to the front)
 
-3. Install a recent version of Boost (>= 1.47). (tested with 1.63) 
+3. Install a recent version of Boost (>= 1.60). (tested with 1.63) 
    a) Use package "libboost-dev" from your Linux distribution, if recent enough and
       built against mpich2 (and not openmpi).
    b) Download source code from http://www.boost.org/ and perform the following
       steps:
-      - unpack to ~/local/src/boost_1_44 and cd to this directory
+      - unpack to ~/local/src/boost_1_63 and cd to this directory
       - run ./bootstrap.sh
       - edit project-config.jam and modify the lines below:
       		option.set prefix : /home/<your-login>/local ;
 			option.set exec-prefix : /home/<your-login>/local ;
 			option.set libdir : /home/<your-login>/local/lib ;
 			option.set includedir : /home/<your-login>/local/include ;
-      - edit tools/build/v2/user-config.jam (on newer versions: create tools/build/src/user-config.jam)
+      - edit or create tools/build/src/user-config.jam (on older Boost versions, tools/build/v2/user-config.jam)
         and add the line:
       		using mpi ;
       - edit boost/mpi/config.hpp and uncomment the line
@@ -47,7 +47,7 @@ all dependencies can be installed without administrator rights.
 
 5. Install other required libraries using a package from your distribution
         - LAPACK (liblapack-dev, libf2c-dev)
-        - GNU scientific library (libgsl0-dev)
+        - optional: GNU scientific library (libgsl0-dev)
         
 6. Install ccache
    - Use a package from your distribution (ccache)   

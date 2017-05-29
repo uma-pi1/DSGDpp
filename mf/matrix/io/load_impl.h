@@ -29,8 +29,8 @@ struct BlockAndLoadMatrixTask {
 		// get data
 		ch.recv(name);
 		ch.recv(blockLocations);
-		ch.recv(blockOffsets1);
-		ch.recv(blockOffsets2);
+		ch.recvAsync(blockOffsets1); // since vector was sent async, need asynchronous recv
+		ch.recvAsync(blockOffsets2); // since vector was sent async, need asynchronous recv
 		ch.recv(fname);
 		ch.recv(format);
 

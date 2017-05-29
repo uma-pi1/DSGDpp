@@ -49,8 +49,8 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 # my own includes/libs
-include_directories(~/local/include)############
-link_directories(~/local/lib)####################3
+#include_directories(~/local/include)############
+#link_directories(~/local/lib)####################3
 SET(RG_LIBRARIES rg)
 SET(MPI2_LIBRARIES mpi2)
 
@@ -62,12 +62,12 @@ SET(CMAKE_CXX_COMPILER ccache)
 SET(CMAKE_CXX_COMPILER_ARG1 mpicxx)
 
 # search for boost library
-# find_package(Boost 1.55 COMPONENTS serialization mpi thread)
-# IF(NOT ${Boost_FOUND})
-	SET(BOOST_ROOT ~/local) # default########################
-	SET(Boost_NO_SYSTEM_PATHS TRUE) # needed with cmake on lenny to prevent it grabbing an old system version...
-	find_package(Boost COMPONENTS serialization mpi thread program_options regex filesystem chrono REQUIRED)	
-## ENDIF(NOT ${Boost_FOUND})
+find_package(Boost 1.63 COMPONENTS serialization mpi thread program_options regex filesystem chrono)	
+IF(NOT ${Boost_FOUND})
+  SET(BOOST_ROOT ~/local) # default
+  SET(Boost_NO_SYSTEM_PATHS ON) # force to use own build
+  find_package(Boost 1.63 COMPONENTS serialization mpi thread program_options regex filesystem chrono REQUIRED)	
+ENDIF(NOT ${Boost_FOUND})
 link_directories(${Boost_LIBRARY_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -79,7 +79,7 @@ set(lapack_LIBRARIES /usr/lib/atlas-base/liblapack_atlas.so)
 
 # This project uses Apache v2 licence, so we cannot include GSL.
 # If nevertheless you want to use GSL for ALS (works better):
-# 1. uncommend the following lines
+# 1. uncomment the following lines
 # 2. add a FindGSL.cmake file in the projects root folder
 # 3. uncomment in als_impl.cc the #include <gsl/gsl_linalg.h> and the #define ALS_USE_GSL 
 ### search for GSL

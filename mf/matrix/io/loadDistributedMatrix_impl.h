@@ -86,7 +86,7 @@ struct ReadDistributedMatrixTask {
 	 */
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<ReadDistributedMatrixTaskArg> args;
-		ch.recv(args);
+		ch.recvAsync(args);
 		std::vector<boost::mpi::request> reqs(args.size());
 		std::vector<int> results(args.size());
 

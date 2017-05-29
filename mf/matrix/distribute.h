@@ -186,7 +186,7 @@ struct PerBlockTaskReturnArgIndex {
 
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<Arg> vars;
-		ch.recv(vars);
+		ch.recvAsync(vars);
 		std::vector<boost::mpi::request> reqs(vars.size());
 		std::vector<ReturnType> results(vars.size());
 		for (unsigned i=0; i<vars.size(); i++) {
@@ -222,7 +222,7 @@ struct PerBlockTaskReturnArg {
 
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<Arg> vars;
-		ch.recv(vars);
+		ch.recvAsync(vars);
 		std::vector<boost::mpi::request> reqs(vars.size());
 		std::vector<ReturnType> results(vars.size());
 		for (unsigned i=0; i<vars.size(); i++) {
@@ -259,7 +259,7 @@ struct PerBlockTaskVoidArgIndex {
 
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<Arg> vars;
-		ch.recv(vars);
+		ch.recvAsync(vars);
 		std::vector<boost::mpi::request> reqs(vars.size());
 		std::vector<Return> results(vars.size());
 		for (unsigned i=0; i<vars.size(); i++) {
@@ -294,7 +294,7 @@ struct PerBlockTaskVoidArg {
 
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<Arg> vars;
-		ch.recv(vars);
+		ch.recvAsync(vars);
 		std::vector<boost::mpi::request> reqs(vars.size());
 		std::vector<Return> results(vars.size());
 		for (unsigned i=0; i<vars.size(); i++) {
@@ -341,7 +341,7 @@ struct PerBlockTaskReturnIndex {
 
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<Arg> vars;
-		ch.recv(vars);
+		ch.recvAsync(vars);
 		std::vector<boost::mpi::request> reqs(vars.size());
 		std::vector<ReturnType> results(vars.size());
 		for (unsigned i=0; i<vars.size(); i++) {
@@ -375,7 +375,7 @@ struct PerBlockTaskReturn {
 
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<Arg> vars;
-		ch.recv(vars);
+		ch.recvAsync(vars);
 		std::vector<boost::mpi::request> reqs(vars.size());
 		std::vector<ReturnType> results(vars.size());
 		for (unsigned i=0; i<vars.size(); i++) {
@@ -410,7 +410,7 @@ struct PerBlockTaskVoidIndex {
 
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<Arg> vars;
-		ch.recv(vars);
+		ch.recvAsync(vars);
 		std::vector<boost::mpi::request> reqs(vars.size());
 		std::vector<Return> results(vars.size());
 		for (unsigned i=0; i<vars.size(); i++) {
@@ -444,7 +444,7 @@ struct PerBlockTaskVoid {
 
 	static inline void run(mpi2::Channel ch, mpi2::TaskInfo info) {
 		std::vector<Arg> vars;
-		ch.recv(vars);
+		ch.recvAsync(vars);
 		std::vector<boost::mpi::request> reqs(vars.size());
 		std::vector<Return> results(vars.size());
 		for (unsigned i=0; i<vars.size(); i++) {
