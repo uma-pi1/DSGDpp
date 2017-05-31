@@ -130,6 +130,10 @@ e.g. PSGD with 8 threads
 ./psgdNZL2NoLock --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
 --tasks-per-rank=8 --lambda=0  --eps0=0.000625 --epochs=60 --shuffle="parAdd" 
 
+e.g. PSGD with locking with 8 threads
+./psgdNZL2Lock --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
+--tasks-per-rank=8 --lambda=0  --eps0=0.000625 --epochs=60 --shuffle="parAdd" 
+
 e.g. CSGD with 8 threads
 ./stratified-psgd --input-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm \
 --tasks-per-rank=8 --eps0=0.000625 --cache=256 --epochs=60 --lambda=0 

@@ -20,7 +20,9 @@ add_executable(mfprepare mfprepare.cc)
 add_executable(mfcreateRandomMatrixFile mfcreateRandomMatrixFile.cc)
 
 add_executable(psgdL2NoLock psgdL2NoLock.cc)
+add_executable(psgdL2Lock psgdL2Lock.cc)
 add_executable(psgdNZL2NoLock psgdNZL2NoLock.cc)
+add_executable(psgdNZL2Lock psgdNZL2Lock.cc)
 add_executable(stratified-psgd stratified-psgd.cc)
 
 add_executable(mfcreateInitialFactors mfcreateInitialFactors.cc)
