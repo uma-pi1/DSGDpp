@@ -48,9 +48,9 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 # definitions for visual studio
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
-# my own includes/libs
-#include_directories(~/local/include)############
-#link_directories(~/local/lib)####################3
+# first look in local include/library folder (e.g., for mpi2 library or Boost)
+include_directories(~/local/include)
+link_directories(~/local/lib)
 SET(RG_LIBRARIES rg)
 SET(MPI2_LIBRARIES mpi2)
 
@@ -66,7 +66,7 @@ find_package(Boost 1.63 COMPONENTS serialization mpi thread program_options rege
 IF(NOT ${Boost_FOUND})
   SET(BOOST_ROOT ~/local) # default
   SET(Boost_NO_SYSTEM_PATHS ON) # force to use own build
-  find_package(Boost 1.63 COMPONENTS serialization mpi thread program_options regex filesystem chrono REQUIRED)	
+  find_package(Boost 1.63 COMPONENTS serialization mpi thread program_options regex filesystem chrono REQUIRED)
 ENDIF(NOT ${Boost_FOUND})
 link_directories(${Boost_LIBRARY_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
