@@ -1,219 +1,180 @@
 # DSGDpp
 
-This project contains code performing matrix factorizations in a parallel and distributed fashion. 
+This project contains implementations of various parallel algorithms for computing low-rank matrix factorizations. Both shared-memory and shared-nothing (via MPI) implementations are provided. The following algorithms are currently implemented:
 
-Quick start
-===========
+- DSGD
+- DSGD++
+- Asynchronous SGD
+- CSGD
+- Parallel SGD with locking
+- Lock-free parallel SGD (Hogwild)
+- Alternating least squares
+- Non-negative matrix factorization.
+
+## Quick start
+
+Follow the installation instructions given in the INSTALL file. First time installation and compilation may take while.
+
+To generate some synthetic data, run:
 
     cd build/tools
-
     ./generateSyntheticData
 
-The script generateSyntheticData will generate in /tmp:
-- a matrix with training data: train.mmc
-- a matrix with test data: test.mmc
-- 2 initial factor matrices: W.mma and H.mma
+The script `generateSyntheticData` will generate the following files:
+- `/tmp/train.mmc`: a matrix with some training data
+- `/tmp/test.mmc`: a matrix with some test data
+- `/tmp/W.mma` and `/tmp/H.mma`: initial factor matrices
 
-Then run the method of your choice in parallel:
+To run DSGD++ on a single-machine with 4 threads, type:
 
-    ./mfdsgdpp --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)" --epochs=3
+    ./mfdsgdpp --tasks-per-rank=4 --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --rank=10 --update="Nzsl_L2(1)" --regularize="None" --loss="Nzsl_L2(1)" --decay="BoldDriver(0.001)" --epochs=50 --trace=/tmp/trace.R
 
-or distributed:
+This gives you output such as:
 
-    mpirun --hosts localhost,localhost ./mfdsgdpp --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)"
+        5 mpi2 | Initialized mpi2 on 1 rank(s)
+        6 mpi2 | Starting task managers (parallel mode)...
+        6 mpi2 | Started task manager at rank 0
+      108 main | Input
+      108 main |     Input file: /tmp/train.mmc
+      108 main |     Input test file: /tmp/test.mmc
+      108 main |     Input row factors: /tmp/W.mma
+      108 main |     Input column factors: /tmp/H.mma
+      108 main | Output
+      108 main |     Output row factors: Disabled
+      108 main |     Output column factors: Disabled
+      108 main |     Trace: /tmp/trace.R (trace)
+      108 main | Parallelization
+      108 main |     MPI ranks: 1
+      108 main |     Tasks per rank: 4
+      108 main | DSGD++ options
+      108 main |     Seed: 1499165899
+      108 main |     Epochs: 50
+      108 main |     Factorization rank: 10
+      108 main |     Update function: Nzsl_L2(1)
+      108 main |     Regularize function: None
+      108 main |     Loss function: Nzsl_L2(1)
+      108 main |     Decay: BoldDriver(0.001)
+      108 main |     Balancing: Disabled
+      108 main |     Absolute function: Disabled
+      108 main |     Truncation: Disabled
+      108 main |     SGD step sequence: WOR
+      108 main |     DSGD stratum sequence: COWOR
+    Decay : BoldDriver( 0.001 ) 
+    START generating data and test matrices: 
+      109 mf   | File '/tmp/train.mmc' is not blocked; it will be blocked automatically
+      110 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7) (1,0) (1,1) (1,2) (1,3) (1,4) (1,5) (1,6) (1,7) (2,0) (2,1) (2,2) (2,3) (2,4) (2,5) (2,6) (2,7) (3,0) (3,1) (3,2) (3,3) (3,4) (3,5) (3,6) (3,7)  of '/tmp/train.mmc'
+     3664 mf   | File '/tmp/test.mmc' is not blocked; it will be blocked automatically
+     3664 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7) (1,0) (1,1) (1,2) (1,3) (1,4) (1,5) (1,6) (1,7) (2,0) (2,1) (2,2) (2,3) (2,4) (2,5) (2,6) (2,7) (3,0) (3,1) (3,2) (3,3) (3,4) (3,5) (3,6) (3,7)  of '/tmp/test.mmc'
+     3959 mf   | Test matrix: 100000 x 100000, 100000 nonzeros, 4 x 8 blocks
+     3961 mf   | Data matrix: 100000 x 100000, 1000000 nonzeros, 4 x 8 blocks
+    Time for generating data and test matrices: 3.85172s
+     3961 mf   | File '/tmp/W.mma' is not blocked; it will be blocked automatically
+     3961 mf   | Constructing blocks (0,0) (1,0) (2,0) (3,0)  of '/tmp/W.mma'
+     4540 mf   | Row factor matrix: 100000 x 10, 4 x 1 blocks
+     4540 mf   | File '/tmp/H.mma' is not blocked; it will be blocked automatically
+     4541 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7)  of '/tmp/H.mma'
+     5209 mf   | Column factor matrix: 10 x 100000, 1 x 8 blocks
+    Time for generating Factors: 1.24832s
+    Job created...
+    testData created...
+     6450 main | Using NzslLoss for test data
+     6450 mf   | Starting DSGD++ (polling delay: 500 microseconds)
+     6450 mf   | Using COWOR order for selecting strata
+     6450 mf   | Using WOR order for selecting training points
+     6869 mf   | Loss: 1.00091e+09 (0.418913s)
+     6936 mf   | Test loss: 9.98073e+07 (0.066328s)
+     6936 mf   | Step size: 0.001 (0s)
+     6936 mf   | Starting epoch 1
+     7457 mf   | Finished epoch 1 (0.521064s)
+     7999 mf   | Loss: 9.94145e+08 (0.542368s)
+     8077 mf   | Test loss: 9.98114e+07 (0.077686s)
+    ...   
 
+To get some idea about the performance of the algorithm, start an `R` console and type:
 
+    source("mfplot.R")
+    source("/tmp/trace.R")                               # created by running DSGD++ above
+    mfplot(trace, x.is="time$elapsed", log="y")          # plots the training loss over time
 
-Preparing data 
-==================
+To run DSGD++ on two machines (here both localhost) with 4 threads each, type:
 
-For the input matrices we use market matrix formats. See: http://math.nist.gov/MatrixMarket/formats.html. Use the script *generateSyntheticData* to generate toy examples of such matrices.
+    mpirun --hosts localhost,localhost ./mfdsgdpp --tasks-per-rank=4 --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --rank=10 --update="Nzsl_L2(1)" --regularize="None" --loss="Nzsl_L2(1)" --decay="BoldDriver(0.001)" --epochs=50 --trace=/tmp/trace.R
 
+## Preparing data 
 
-Running the factorization 
-===============================
+To use DSGDpp, convert your data to a [market matrix format](http://math.nist.gov/MatrixMarket/formats.html). We also provide tools to generate and convert matrices (e.g., `mfgenerate`, `mfconvert`, `mfsample`, `mfdblock`).
 
-In the folder build/tools you can find tools that can run factorization from the command line. For more details for each method please consult our publication:
+To run a factorization in a shared-nothing environment, the data must lie in a shared filesystem mounted at the same location on all machines.
 
-F. Makari, C. Teflioudi, R. Gemulla, P. J. Haas, Y. Sismanis
+Note that many algorithms require the data to be blocked in some form. The required blocking will be created on the fly, but we did not optimize the performance of this step. For faster data loading, matrices should be blocked up front via the `mfdblock` tool.
 
-*Shared-Memory and Shared-Nothing Stochastic Gradient Descent Algorithms for Matrix Completion. *
+## Tools
 
-In KAIS, 2013
+We provide a number of tools to run factorizations and prepare data. All tools are located under `build/tools`. Run a tool executable without arguments for help on its parameters. E.g., runnung `./mfdsgdpp` produces
 
-To see how to use a tool, simply run it without arguments.
-The usual parameters for the tools are:
-
---input-file: the matrix with the training data. E.g., /tmp/train.mmc
-
---input-test-file: the matrix with the test data. E.g., /tmp/test.mmc
-
---input-row-file: the matrix with the initial row factors. E.g., /tmp/W.mma 
-
---input-col-file: the matrix with the initial column factors. E.g., /tmp/H.mma
-
---tasks-per-rank: the number of threads to work per machine. E.g., 2
-
---epochs: the number of iterations (passes over all the training data points). E.g.: 20
-
---update: the update that needs to be performed. "Nzsl_Nzl2(1)" means Non-Zero-Squared-Loss with weighted L2 regularization and regularization parameter=1 as objective function.
-
---loss: the loss function to report after each epoch. E.g., "Nzsl_Nzl2(1)"
-
---regularize: This is experimental. Please always keep it ="None"
-
---rank: the rank of the factorization. E.g, 10, 50, 100
-
---decay: the step size selection mechanism. E.g. "BoldDriver(0.01)" will use BoldDriver (please refer to our publication for a reference on how BoldDriver works) with initial step size = 0.01
-
-Below you can find a list of the implemented methods with example invocations. We also state if the methods can run in parallel (shared memory) and/or distributed (shared-nothing)
-
-DSGD++ (parallel and distributed)
---------------------------------
-
-To run DSGD++ locally with 2 threads
-
-    ./mfdsgdpp --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)" --epochs=3
-
-To use MPI to distribute on many machines (substitute localhost with the machine names)
-
-    mpirun --hosts localhost,localhost ./mfdsgdpp --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)"
-
-PSGD without locking aka HOGWILD (parallel)
--------------------------------------------
-implemented  weighted L2 regularization only
-
-    ./psgdNZL2NoLock --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2
-
-PSGD with locking (parallel)
--------------------------------------------
-implemented  weighted L2 regularization only
-
-    ./psgdNZL2Lock --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2
-
-ALS (parallel and distributed)
-------------------------------
-
-    mpirun --hosts localhost,localhost ./mfdap --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=1  --loss="Nzsl_Nzl2(1)" --epochs=3
-
-ASGD (distributed)
-------------------
-
-    mpirun --hosts localhost,localhost ./mfasgd --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=1 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)" --rank=10
-
-CSGD  (parallel)
------------------
-    ./stratified-psgd --input-file=/tmp/train.mmc --input-test-file=/tmp/test.mmc  --input-row-file=/tmp/W.mma --input-col-file=/tmp/H.mma --tasks-per-rank=2 --eps0=0.001 --cache=256
-
-
-Other tools
-=================
-
-In the folder build/tools you can find the following tools:
-
-Create Initial Factor Matrices
-------------------------------
-
-Use the tool *mfcreateInitialFactors*. With this tool you can create the 2 initial factor matrices for the factorization of rank *rank* of an original input matrix of the form *size1* x *size2*. 
-The values of these matrices can be drawn from specific distributions (e.g., "Normal(0,1)", "Uniform(-1,1)").
-
-Average-out Original Matrix
----------------------------
-
-In case you are working with real data, you might want to the average of all observed training points from the input and input-test matrix. To do this you can use the tool *averageOutMatrix*.
-
-Sample and Project Input Matrix
--------------------------------
-
-For using adaptive decay (instead of bold driver) as a step size selection mechanism, 
-you will need to create a sample matrix from your input matrix and learn the best step size to use on this sample matrix. The tool *mfsample* can create such a sample matrix for you.
-This tool samples the  sparse input matrix and decides the size of the projected matrix according to the following parameters:
-It decides the rows and columns of the projected matrix either in terms of absolute numbers or as fraction of the rows and columns of the original matrix. 
-Alternatively, one can supply the tool with the number of non-zero entries to be sampled. 
-Additionally to the sample matrix, the tool can also generate files that contain the mappings for rows and columns between the original and sampled matrix.  
-
-This tool (mfsample) does NOT eliminate empty rows and columns from the resulting projected matrix. 
-To eliminate empty (or nearly empty) rows and columns use the tool *mfproject*. 
-This tool keeps only rows and columns of the input matrix whose number of nonzero entries is above some threshold (with default threshold 0). 
-It can also repeat this elimination process until all rows and columns pass the threshold.
-
-*mfprepare* is a tool that combines the functionality of mfsample, mfproject and mfcreateInitialFactors, i.e.:
-- (1) It samples the input matrix
-- (2) It projects out the zero row and columns
-- (3) It creates initial factors for a specific rank and according to some distribution
-
- Example invocation:
- 
-    ./mfprepare --input-file=/someDir/v.mmc --nnz=10000 --values="Uniform(0,1)" --rank=10
+    mfsgdpp [options]
     
-Convert Matrices Between Different Formats
-------------------------------------------
+    Options:
+      --help                produce help message
+      --input-file arg      filename of data matrix
+      --input-test-file arg filename of test matrix
+      --input-row-file arg  filename of initial row factors
+      --input-col-file arg  filename of initial column factors
+      --output-row-file arg filename of final row factors                                               
+      --output-col-file arg filename of final column factors                                            
+      --trace arg           filename of trace [trace.R]                                                 
+      --trace-var arg       variable name for trace [traceVar]                                          
+      --epochs arg          number of epochs to run [10]                                                
+      --tasks-per-rank arg  number of concurrent tasks per rank [1]                                     
+      --sgd-order arg       order of SGD steps [WOR] (e.g., "SEQ", "WR", "WOR")                         
+      --stratum-order arg   order of strata [COWOR] (e.g., "SEQ", "RSEQ", "WR",                         
+                            "WOR", "COWOR")                                                             
+      --seed arg            seed for random number generator (system time if not                        
+                            set)                                                                        
+      --rank arg            rank of factorization                                                       
+      --update arg          SGD update function (e.g., "Sl", "Nzsl", "GklData")                         
+      --regularize arg      SGD regularization function (e.g., "None", "L2(0.05)",                      
+                            "Nzl2(0.05)")
+      --loss arg            loss function (e.g., "Nzsl", "Nzsl_L2(0.5)"))
+      --abs                 if present, absolute values are taken after every SGD 
+                            step
+      --truncate arg        if present, truncatation is enabled (e.g., --truncate 
+                            "(-1000, 1000)"
+      --decay arg           decay function (constant, bold driver, or auto)
+      --balance arg         Type of balancing (None, L2, Nzl2)
 
-To do so use *mfconvert*.
-Supported extensions are .mma .mmc .bsb .bst .bdb .bdt
+The source code contains additional information about accepted parameter values. 
 
-Generate a Martix Based on a Distribution
-------------------------------------------
+### Factorizating matrices
 
-Use the tool *mfgenerate*. You can specify the dimension of the matrix, how sparse or dense it should be and from which distribution the values should be drawn.
+To run a method in a shared-nothing environment, simply prefix the command with `mpirun --hosts <list-of-hostnames>`.
 
+| Tool | Method(s) |
+| ---- | ------ |
+| mfasgd | Asynchronous SGD |
+| mfdsgdpp | DSGD++ |
+| psgdL2Lock | Parallel SGD with locking, L2 loss |
+| psgdL2NoLock | Parallel SGD without locking (Hogwild), L2 loss |
+| psgdNZL2Lock | Parallel SGD with locking, NZL2 loss |
+| psgdNZL2NoLock | Parallel SGD without locking (Hogwild), NZL2 loss |
+| mfdap | Alternating least squares, non-negative matrix factorization (via multiplicative updates) |
+| mfdsgd | DSGD |
+| mfsgd | Sequential SGD |
+| stratified-psgd | CSGD (cache-conscious parallel SGD) |
 
-Blocking of Matrices
---------------------
+### Utilities
 
-Reading the matrices normally takes place sequentially. The factorization algorithms then partition the matrices in some way before performing the factorization. 
-If the matrices are partitioned before-hand, they can be read in parallel, reducing the reading overhead significantly. To partition the matrices use the *mfdblock* tool.
+| Tool | Description |
+| ---- | ----------- |
+| averageOutMatrix | Center a matrix (substract mean from every observed entry) |
+| mfconvert | Convert between different file formats |
+| mfcreateInitialFactors | Create initial factor matrices |
+| mfcreateRandomMatrixFile | Create a blocked random matrix |
+| mfgenerate | Geneate random matrices |
+| mfproject | Drops rows/columns with fewer entries than a given threshold |
+| mfdblock | Blocks an input matrix |
+| mfsample | Creates a sample of an input matrix (e.g., used for automatic step size selection) |
+| mfprepare | Combines mfsample, mfproject, and mfcreateInitialFactors |
 
-An example invocation could be:
-
-    ./mfdblock --blocks1=2 --blocks2=4 --threads=2 --format="mmc" --input-file=/tmp/train.mmc --output-base-file=/tmp/blockedTrain
-    
-this will create in the /tmp folder the following files:
-
-    blockedTrain-0-0.mmc
-    blockedTrain-0-1.mmc
-    blockedTrain-0-2.mmc
-    blockedTrain-0-3.mmc
-    blockedTrain-1-0.mmc
-    blockedTrain-1-1.mmc
-    blockedTrain-1-2.mmc
-    blockedTrain-1-3.mmc
-    blockedTrain.xml
-    
-A factorization method can then be called by using the .xml file as input-file.
-
-Generate Large Synthetic Matrices On-The-Fly
---------------------------------------------
-
-When using large synthetic data, lots of time might be wasted in reading/writing the matrices from/to the disk.
-*mfcreateRandomMatrixFile* isa  tool that creates a file descriptor for generating synthetic matrices on the fly  in a parallel or distributed manner.
-For a given experiment you will need 2 such files: 
-- (i) a file containing the original factors + the data matrix + the test matrix (optionally) 
-- (ii) a file containing the starting points (initial factors). 
-
-E.g.:
-
-    ./mfcreateRandomMatrixFile --size1=1000000 --size2=1000000 --nnz=10000000 --nnzTest=1000000 --rank=10 --values="Normal(0,10)" --noise="Normal(0,1)" --blocks1=10 --blocks2=10 --output-file=/tmp/synthetic.rm
-Will create (i) and 
-
-    ./mfcreateRandomMatrixFile --size1=1000000 --size2=1000000  --rank=10 --values="Uniform(-1,1)" --blocks1=10 --blocks2=10 --output-file=/tmp/syntheticFactors.rm
-will create (ii).
-
-
-We can then call DSGDpp as:
-
-    mpirun --hosts localhost,localhost ./mfdsgdpp --input-file=/tmp/synthetic.rm --input-test-file=/tmp/synthetic.rm --input-row-file=/tmp/syntheticFactors.rm --input-col-file=/tmp/syntheticFactors.rm --tasks-per-rank=2 --rank=10 --update="Nzsl_Nzl2(1)" --regularize="None" --loss="Nzsl_Nzl2(1)" --truncate="(-100,100)" --decay="BoldDriver(0.01)"
-
-Before creating a file take into consideration the following: 
-- (1) parallelization happens in row-chunk manner. Please make sure that the blocks1 dimension is enough fine-grained, so that the threads of each node will have enough row-blocks to work on. 
-- (2) make sure that the blocks1, blocks2 values are at least as much as the most fine-blocked matrix that you want your file to be able to create. 
-- (3) blocks_in_file mod blocks_of_the_matrix = 0. 
-- (4) rows/columns_of_the_matrix mod blocks_in_file = 0.
-
-
-
-
-Tracing
-=========================
-
+### Citations
 
