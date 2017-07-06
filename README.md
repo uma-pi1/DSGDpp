@@ -178,3 +178,51 @@ To run a method in a shared-nothing environment, simply prefix the command with 
 
 ### Citations
 
+  - **CSGD**
+  
+  
+    F. Makari, C. Teflioudi, R. Gemulla, P. J. Haas, Y. Sismanis
+    
+    *Shared-Memory and Shared-Nothing Stochastic Gradient Descent Algorithms for Matrix Completion.*
+    
+    In KAIS, 2013
+    
+
+  - **DSGD++, Asynchronous SGD, Parallel SGD with locking**
+  
+  
+    C. Teflioudi, F. Makari, R. Gemulla
+    
+    *Distributed Matrix Completion.*
+    
+    In ICDM, 2012.
+    
+
+  - **DSGD**
+
+    
+    R. Gemulla, E. Nijkamp, P. J. Haas, Y. Sismanis
+    
+    *Large-Scale Matrix Factorization with Distributed Stochastic Gradient Descent*
+    
+    In KDD, 2011
+    
+
+  - **Lock-free parallel SGD (Hogwild)**
+  
+  
+    F. Niu, B. Recht, C. Re, and S. J. Wright, 
+    
+    *Hogwild!: A lock-free approach to parallelizing stochastic gradient descent*
+    
+    In NIPS, 2011
+    
+
+  - **Alternating least squares**
+
+  
+    Y. Zhou, D. Wilkinson, R. Schreiber, and R. Pan, 
+    
+    *Large-scale parallel collaborative filtering for the Netflix Prize*
+    
+    In AAIM, 2008
