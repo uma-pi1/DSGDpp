@@ -59,8 +59,6 @@ This gives you output such as:
       108 main |     Truncation: Disabled
       108 main |     SGD step sequence: WOR
       108 main |     DSGD stratum sequence: COWOR
-    Decay : BoldDriver( 0.001 ) 
-    START generating data and test matrices: 
       109 mf   | File '/tmp/train.mmc' is not blocked; it will be blocked automatically
       110 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7) (1,0) (1,1) (1,2) (1,3) (1,4) (1,5) (1,6) (1,7) (2,0) (2,1) (2,2) (2,3) (2,4) (2,5) (2,6) (2,7) (3,0) (3,1) (3,2) (3,3) (3,4) (3,5) (3,6) (3,7)  of '/tmp/train.mmc'
      3664 mf   | File '/tmp/test.mmc' is not blocked; it will be blocked automatically
@@ -74,9 +72,6 @@ This gives you output such as:
      4540 mf   | File '/tmp/H.mma' is not blocked; it will be blocked automatically
      4541 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7)  of '/tmp/H.mma'
      5209 mf   | Column factor matrix: 10 x 100000, 1 x 8 blocks
-    Time for generating Factors: 1.24832s
-    Job created...
-    testData created...
      6450 main | Using NzslLoss for test data
      6450 mf   | Starting DSGD++ (polling delay: 500 microseconds)
      6450 mf   | Using COWOR order for selecting strata
