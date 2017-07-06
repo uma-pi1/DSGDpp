@@ -58,7 +58,7 @@ void runDsgdPp2(Args& args, U update, R regularize, L loss, D decay,
 //		DsgdPpFactorizationData<> testData(dvTest,dw,dh,args.tasksPerRank);
 
 		DsgdPpFactorizationData<> testData(dataVector[1],factorsPair.first,factorsPair.second,args.tasksPerRank);
-		std::cout<<"testData created..."<<std::endl;
+		
 		LOG4CXX_INFO(logger, "Using NzslLoss for test data");
 		NzslLoss testLoss;
 		// run DSGD++
@@ -81,18 +81,16 @@ void runDsgdPp(Args& args, U update, R regularize, L loss) {
 	t.start();
 	if (args.inputTestMatrixFile.length() == 0) {
 		dataVector=getDataMatrices<SparseMatrix>(args.inputMatrixFile,"V",true,args.tasksPerRank, args.worldSize, blocks1, blocks2,false,false);
-	}else{
-		std::cout<<"START generating data and test matrices: "<<std::endl;
+	}else{		
 		dataVector=getDataMatrices<SparseMatrix>(args.inputMatrixFile,"V",true,args.tasksPerRank, args.worldSize, blocks1, blocks2,false,false, &args.inputTestMatrixFile);
 	}
 	t.stop();
-	std::cout<<"Time for generating data and test matrices: "<<t<<std::endl;
-
+	
 	t.start();
 	std::pair<DistributedDenseMatrix, DistributedDenseMatrixCM> factorsPair= getFactors(args.inputRowFacFile,
 			args.inputColFacFile,  args.tasksPerRank, args.worldSize,blocks1,blocks2,false);
 	t.stop();
-	std::cout<<"Time for generating Factors: "<<t<<std::endl;
+	
 
 	// distribute the input matrices
 //	DistributedSparseMatrix dv=loadMatrix<SparseMatrix>(args.inputMatrixFile,
@@ -114,7 +112,6 @@ void runDsgdPp(Args& args, U update, R regularize, L loss) {
 
 	DsgdPpJob<U,R> dsgdPpJob(dataVector[0], factorsPair.first, factorsPair.second, update, regularize, args.sgdOrder, args.stratumOrder, args.tasksPerRank);
 
-	std::cout<<"Job created..."<<std::endl;
 	Trace trace;
 	// add trace fields
 	args.createTraceFields(trace);

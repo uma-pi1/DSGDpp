@@ -147,7 +147,7 @@ void parseDecay(const string& argName, const string& arg, F& f) {
 		if (name.compare("Const") == 0) {
 			if (arguments.size() == 1) {
 				double epsilon = lexical_cast<double>(arguments[0]);
-				cout << "Decay: " << "Const(" << epsilon << ")" << endl;
+// 				cout << "Decay: " << "Const(" << epsilon << ")" << endl;
 				f.decayName = "Const";
 				f.decayArgs = arguments;
 				return;
@@ -174,7 +174,7 @@ void parseDecay(const string& argName, const string& arg, F& f) {
 				f.epsilon = epsilon;
 				f.epsDecrease = NAN;
 				f.epsIncrease = NAN;
-				cout << "Decay : BoldDriver( " << epsilon <<  " ) " << endl;
+// 				cout << "Decay : BoldDriver( " << epsilon <<  " ) " << endl;
 				f.decayName = "BoldDriver";
 				f.decayArgs = arguments;
 				return;
@@ -185,7 +185,7 @@ void parseDecay(const string& argName, const string& arg, F& f) {
 				f.epsilon = epsilon;
 				f.epsDecrease = epsDecrease;
 				f.epsIncrease = epsIncrease;
-				cout << "Decay : Auto( " << epsilon << ", " << epsDecrease << ", " << epsIncrease << " ) " << endl;
+// 				cout << "Decay : Auto( " << epsilon << ", " << epsDecrease << ", " << epsIncrease << " ) " << endl;
 				f.decayName = "BoldDriver";
 				f.decayArgs = arguments;
 				return;
@@ -198,7 +198,7 @@ void parseDecay(const string& argName, const string& arg, F& f) {
 				f.epsilon = epsilon;
 				f.alpha = NAN;
 				f.A = NAN;
-				cout << "Decay : Sequential( " << epsilon <<  " ) " << endl;
+// 				cout << "Decay : Sequential( " << epsilon <<  " ) " << endl;
 				f.decayName = "Sequential";
 				f.decayArgs = arguments;
 				return;
@@ -209,7 +209,7 @@ void parseDecay(const string& argName, const string& arg, F& f) {
 				f.epsilon = epsilon;
 				f.alpha = alpha;
 				f.A = A;
-				cout << "Decay : Sequential( " << epsilon << ", " << alpha << ", " << A << " ) " << endl;
+// 				cout << "Decay : Sequential( " << epsilon << ", " << alpha << ", " << A << " ) " << endl;
 				f.decayName = "Sequential";
 				f.decayArgs = arguments;
 				return;

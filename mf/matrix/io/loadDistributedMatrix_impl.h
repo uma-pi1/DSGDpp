@@ -99,7 +99,6 @@ struct ReadDistributedMatrixTask {
 			// get a pointer pointing at the already reserved space of the node
 			M* m=args[i].data.getLocal<M>();
 			// read the specific block (stored in filename) into the *m (the already reserved space)
-			std::cout << "Reading " << args[i].filename << "..." << std::endl;
 			readMatrix(args[i].filename, *m, args[i].format);
 			results[i]=1; // later change it to nnz of the block
 			reqs[i] = ch.isend(results[i]);

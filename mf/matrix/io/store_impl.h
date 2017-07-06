@@ -63,7 +63,6 @@ struct WriteDistributedMatrixTask {
 		std::vector<std::string> results(args.size());
 		for (unsigned i=0; i<args.size(); i++) {
 			const M* m = args[i].data_.getLocal<M>();
-			std::cout << "Writing " << args[i].filename_ << "..." << std::endl;
 			writeMatrix(args[i].filename_, *m, args[i].format_);
 			results[i] = args[i].filename_;
 			reqs[i] = ch.isend(results[i]);
