@@ -65,7 +65,6 @@ This gives you output such as:
      3664 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7) (1,0) (1,1) (1,2) (1,3) (1,4) (1,5) (1,6) (1,7) (2,0) (2,1) (2,2) (2,3) (2,4) (2,5) (2,6) (2,7) (3,0) (3,1) (3,2) (3,3) (3,4) (3,5) (3,6) (3,7)  of '/tmp/test.mmc'
      3959 mf   | Test matrix: 100000 x 100000, 100000 nonzeros, 4 x 8 blocks
      3961 mf   | Data matrix: 100000 x 100000, 1000000 nonzeros, 4 x 8 blocks
-    Time for generating data and test matrices: 3.85172s
      3961 mf   | File '/tmp/W.mma' is not blocked; it will be blocked automatically
      3961 mf   | Constructing blocks (0,0) (1,0) (2,0) (3,0)  of '/tmp/W.mma'
      4540 mf   | Row factor matrix: 100000 x 10, 4 x 1 blocks
