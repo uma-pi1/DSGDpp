@@ -57,7 +57,8 @@ struct Args {
 };
 
 bool run(Args& args) {
-
+	Timer t;
+	t.start();
 	std::vector<DistributedSparseMatrix> dataVector;
 	if (args.inputTestMatrixFile.length() == 0) {
 		dataVector=getDataMatrices<SparseMatrix>(args.inputMatrixFile,"V",true,args.tasksPerRank, args.worldSize, args.blocks, 1,false,true);
@@ -71,6 +72,11 @@ bool run(Args& args) {
 
 	std::pair<DistributedDenseMatrix, DistributedDenseMatrixCM> factorsPair= getFactors(args.inputRowFacFile,
 			args.inputColFacFile,  args.tasksPerRank, args.worldSize,args.blocks,args.blocks,false);
+	
+	t.stop();
+	LOG4CXX_INFO(logger, "Total time for loading matrices: " << t);
+	
+	
 
 
 
@@ -133,7 +139,7 @@ bool run(Args& args) {
 	// tracing
 	Trace trace;
 	args.createTraceFields(trace);
-	Timer t;
+	
 	t.start();
 
 	// go

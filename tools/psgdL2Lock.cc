@@ -141,16 +141,19 @@ int main(int argc, char* argv[]) {
 // 		readMatrix(inputRowFacFile,w);
 // 		readMatrix(inputColFacFile,h);
 		
-		std::cout<<"Reading Data"<<std::endl;
+		Timer t;
+		t.start();
 		std::vector<DistributedSparseMatrix> dataVector=getDataMatrices<SparseMatrix>(inputMatrixFile,"V",true,
 				tasks, 1, 1, 1, true, false, &inputTestMatrixFile);
 
 		SparseMatrix& v = *mpi2::env().get<SparseMatrix>(dataVector[0].blocks()(0,0).var());
 		SparseMatrix& vTest = *mpi2::env().get<SparseMatrix>(dataVector[1].blocks()(0,0).var());
 
-	  	std::cout<<"Reading Factors"<<std::endl;
+	  	
 		std::pair<DistributedDenseMatrix, DistributedDenseMatrixCM> factorsPair= getFactors(inputRowFacFile,
 			inputColFacFile,  tasks, 1, 1, 1, true);
+		t.stop();
+		LOG4CXX_INFO(logger, "Total time for loading matrices: " << t);
 		
 		DenseMatrix w = *mpi2::env().get<DenseMatrix>(factorsPair.first.blocks()(0,0).var());
 		DenseMatrixCM h = *mpi2::env().get<DenseMatrixCM>(factorsPair.second.blocks()(0,0).var());
@@ -166,7 +169,7 @@ int main(int argc, char* argv[]) {
 		BalanceMethod balanceMethod = BALANCE_OPTIMAL;
 
 		// initialize the DSGD
-		Timer t;
+		
 		PsgdRunner psgdRunner(random);
 		PsgdJob<UpdateL,Regularize> psgdJobLock(v, w, h, updateLock, regularize, order, tasks, shuffle);
 		BoldDriver decay(eps0);

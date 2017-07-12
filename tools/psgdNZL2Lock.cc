@@ -137,16 +137,20 @@ int main(int argc, char* argv[]) {
 		Random32 random;
 
 
-		std::cout<<"Reading Data"<<std::endl;
+		Timer t;
+		t.start();
 		std::vector<DistributedSparseMatrix> dataVector=getDataMatrices<SparseMatrix>(inputMatrixFile,"V",true,
 				tasks, 1, 1, 1, true, false, &inputTestMatrixFile);
 
 		SparseMatrix& v = *mpi2::env().get<SparseMatrix>(dataVector[0].blocks()(0,0).var());
 		SparseMatrix& vTest = *mpi2::env().get<SparseMatrix>(dataVector[1].blocks()(0,0).var());
 
-	  	std::cout<<"Reading Factors"<<std::endl;
+	  	
 		std::pair<DistributedDenseMatrix, DistributedDenseMatrixCM> factorsPair= getFactors(inputRowFacFile,
 			inputColFacFile,  tasks, 1, 1, 1, true);
+		
+		t.stop();
+		LOG4CXX_INFO(logger, "Total time for loading matrices: " << t);
 
 
 		// parameters for SGD
@@ -165,7 +169,7 @@ int main(int argc, char* argv[]) {
 			DenseMatrixCM h = *mpi2::env().get<DenseMatrixCM>(factorsPair.second.blocks()(0,0).var());
 
 			// initialize the DSGD
-			Timer t;
+			
 			PsgdRunner psgdRunner(random);
 			PsgdJob<UpdateL,Regularize> psgdJobLock(v, w, h, updateLock, regularize, order, tasks, shuffle);
 

@@ -104,7 +104,8 @@ void runDsgd(Args& args, U update, R regularize, L loss) {
 
 	mf_size_type blocks1 = args.worldSize * args.tasksPerRank;
 	mf_size_type blocks2 = args.worldSize * args.tasksPerRank;
-
+	Timer t;
+	t.start();
 	std::vector<DistributedSparseMatrix> dataVector;
 	if (args.inputTestMatrixFile.length() == 0) {
 		dataVector=getDataMatrices<SparseMatrix>(args.inputMatrixFile, "V", true, args.tasksPerRank,
@@ -116,6 +117,9 @@ void runDsgd(Args& args, U update, R regularize, L loss) {
 
 	std::pair<DistributedDenseMatrix, DistributedDenseMatrixCM> factorsPair= getFactors(args.inputRowFacFile,
 			args.inputColFacFile,  args.tasksPerRank, args.worldSize, blocks1, blocks2, false);
+	
+	t.stop();
+	LOG4CXX_INFO(logger, "Total time for loading matrices: " << t);
 
 //	// distribute the input matrices
 //	DistributedSparseMatrix dv=loadMatrix<SparseMatrix>(args.inputMatrixFile,

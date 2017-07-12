@@ -31,57 +31,65 @@ To run DSGD++ on a single-machine with 4 threads, type:
 
 This gives you output such as:
 
-        5 mpi2 | Initialized mpi2 on 1 rank(s)
-        6 mpi2 | Starting task managers (parallel mode)...
-        6 mpi2 | Started task manager at rank 0
-      108 main | Input
-      108 main |     Input file: /tmp/train.mmc
-      108 main |     Input test file: /tmp/test.mmc
-      108 main |     Input row factors: /tmp/W.mma
-      108 main |     Input column factors: /tmp/H.mma
-      108 main | Output
-      108 main |     Output row factors: Disabled
-      108 main |     Output column factors: Disabled
-      108 main |     Trace: /tmp/trace.R (trace)
-      108 main | Parallelization
-      108 main |     MPI ranks: 1
-      108 main |     Tasks per rank: 4
-      108 main | DSGD++ options
-      108 main |     Seed: 1499165899
-      108 main |     Epochs: 50
-      108 main |     Factorization rank: 10
-      108 main |     Update function: Nzsl_L2(1)
-      108 main |     Regularize function: None
-      108 main |     Loss function: Nzsl_L2(1)
-      108 main |     Decay: BoldDriver(0.001)
-      108 main |     Balancing: Disabled
-      108 main |     Absolute function: Disabled
-      108 main |     Truncation: Disabled
-      108 main |     SGD step sequence: WOR
-      108 main |     DSGD stratum sequence: COWOR
-      109 mf   | File '/tmp/train.mmc' is not blocked; it will be blocked automatically
-      110 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7) (1,0) (1,1) (1,2) (1,3) (1,4) (1,5) (1,6) (1,7) (2,0) (2,1) (2,2) (2,3) (2,4) (2,5) (2,6) (2,7) (3,0) (3,1) (3,2) (3,3) (3,4) (3,5) (3,6) (3,7)  of '/tmp/train.mmc'
-     3664 mf   | File '/tmp/test.mmc' is not blocked; it will be blocked automatically
-     3664 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7) (1,0) (1,1) (1,2) (1,3) (1,4) (1,5) (1,6) (1,7) (2,0) (2,1) (2,2) (2,3) (2,4) (2,5) (2,6) (2,7) (3,0) (3,1) (3,2) (3,3) (3,4) (3,5) (3,6) (3,7)  of '/tmp/test.mmc'
-     3959 mf   | Test matrix: 100000 x 100000, 100000 nonzeros, 4 x 8 blocks
-     3961 mf   | Data matrix: 100000 x 100000, 1000000 nonzeros, 4 x 8 blocks
-     3961 mf   | File '/tmp/W.mma' is not blocked; it will be blocked automatically
-     3961 mf   | Constructing blocks (0,0) (1,0) (2,0) (3,0)  of '/tmp/W.mma'
-     4540 mf   | Row factor matrix: 100000 x 10, 4 x 1 blocks
-     4540 mf   | File '/tmp/H.mma' is not blocked; it will be blocked automatically
-     4541 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7)  of '/tmp/H.mma'
-     5209 mf   | Column factor matrix: 10 x 100000, 1 x 8 blocks
-     6450 main | Using NzslLoss for test data
-     6450 mf   | Starting DSGD++ (polling delay: 500 microseconds)
-     6450 mf   | Using COWOR order for selecting strata
-     6450 mf   | Using WOR order for selecting training points
-     6869 mf   | Loss: 1.00091e+09 (0.418913s)
-     6936 mf   | Test loss: 9.98073e+07 (0.066328s)
-     6936 mf   | Step size: 0.001 (0s)
-     6936 mf   | Starting epoch 1
-     7457 mf   | Finished epoch 1 (0.521064s)
-     7999 mf   | Loss: 9.94145e+08 (0.542368s)
-     8077 mf   | Test loss: 9.98114e+07 (0.077686s)
+        177 mpi2 | Initialized mpi2 on 1 rank(s)
+	219 mpi2 | Starting task managers (parallel mode)...
+	219 mpi2 | Started task manager at rank 0
+	320 main | Input
+	320 main |     Input file: /tmp/train.mmc
+	320 main |     Input test file: /tmp/test.mmc
+	320 main |     Input row factors: /tmp/W.mma
+	320 main |     Input column factors: /tmp/H.mma
+	320 main | Output
+	320 main |     Output row factors: Disabled
+	320 main |     Output column factors: Disabled
+	320 main |     Trace: /tmp/trace.R (trace)
+	320 main | Parallelization
+	320 main |     MPI ranks: 1
+	320 main |     Tasks per rank: 4
+	320 main | DSGD++ options
+	320 main |     Seed: 1499881717
+	320 main |     Epochs: 50
+	321 main |     Factorization rank: 10
+	321 main |     Update function: Nzsl_L2(1)
+	321 main |     Regularize function: None
+	321 main |     Loss function: Nzsl_L2(1)
+	321 main |     Decay: BoldDriver(0.001)
+	321 main |     Balancing: Disabled
+	321 main |     Absolute function: Disabled
+	321 main |     Truncation: Disabled
+	321 main |     SGD step sequence: WOR
+	321 main |     DSGD stratum sequence: COWOR
+	367 mf   | File '/tmp/train.mmc' is not blocked; it will be blocked automatically
+	368 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7) (1,0) (1,1) (1,2) (1,3) (1,4) (1,5) (1,6) (1,7) (2,0) (2,1) (2,2) (2,3) (2,4) (2,5) (2,6) (2,7) (3,0) (3,1) (3,2) (3,3) (3,4) (3,5) (3,6) (3,7)  of '/tmp/train.mmc'
+      1100 mf   | File '/tmp/test.mmc' is not blocked; it will be blocked automatically
+      1101 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7) (1,0) (1,1) (1,2) (1,3) (1,4) (1,5) (1,6) (1,7) (2,0) (2,1) (2,2) (2,3) (2,4) (2,5) (2,6) (2,7) (3,0) (3,1) (3,2) (3,3) (3,4) (3,5) (3,6) (3,7)  of '/tmp/test.mmc'
+      1172 mf   | Test matrix: 100000 x 100000, 100000 nonzeros, 4 x 8 blocks
+      1172 mf   | Data matrix: 100000 x 100000, 1000000 nonzeros, 4 x 8 blocks
+      1172 mf   | File '/tmp/W.mma' is not blocked; it will be blocked automatically
+      1173 mf   | Constructing blocks (0,0) (1,0) (2,0) (3,0)  of '/tmp/W.mma'
+      1532 mf   | Row factor matrix: 100000 x 10, 4 x 1 blocks
+      1532 mf   | File '/tmp/H.mma' is not blocked; it will be blocked automatically
+      1532 mf   | Constructing blocks (0,0) (0,1) (0,2) (0,3) (0,4) (0,5) (0,6) (0,7)  of '/tmp/H.mma'
+      1960 mf   | Column factor matrix: 10 x 100000, 1 x 8 blocks
+      1972 main | Total time for loading matrices: 1.59269s
+      2051 main | Using NzslLoss for test data
+      2051 mf   | Starting DSGD++ (polling delay: 500 microseconds)
+      2051 mf   | Using COWOR order for selecting strata
+      2051 mf   | Using WOR order for selecting training points
+      2092 mf   | Loss: 1.00091e+09 (0.040013s)
+      2101 mf   | Test loss: 9.98073e+07 (0.009003s)
+      2101 mf   | Step size: 0.001 (0s)
+      2101 mf   | Starting epoch 1
+      2257 mf   | Finished epoch 1 (0.1566s)
+      2301 mf   | Loss: 9.94144e+08 (0.043457s)
+      2307 mf   | Test loss: 9.98113e+07 (0.005742s)
+      2307 mf   | Step size: 0.00105 (0s)
+      2307 mf   | Starting epoch 2
+      2468 mf   | Finished epoch 2 (0.160963s)
+      2508 mf   | Loss: 9.84892e+08 (0.040107s)
+      2515 mf   | Test loss: 9.98201e+07 (0.006841s)
+      2515 mf   | Step size: 0.0011025 (0s)
+
     ...   
 
 To get some idea about the performance of the algorithm, start an `R` console and type:

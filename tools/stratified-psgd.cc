@@ -209,18 +209,21 @@ int main(int argc, char* argv[]) {
 // 		DenseMatrixCM h;
 // 		readMatrix(inputColFacFile, h, MM_ARRAY);
 		
-		std::cout<<"Reading Data"<<std::endl;
+		Timer t;
+		t.start();
 		std::vector<DistributedSparseMatrix> dataVector=getDataMatrices<SparseMatrix>(inputMatrixFile,"V",true,
 				tasks, 1, 1, 1, true, false, &inputTestMatrixFile);
 
 		SparseMatrix& v = *mpi2::env().get<SparseMatrix>(dataVector[0].blocks()(0,0).var());
 		SparseMatrix& vTest = *mpi2::env().get<SparseMatrix>(dataVector[1].blocks()(0,0).var());
 
-	  	std::cout<<"Reading Factors"<<std::endl;
+	  	
 		std::pair<DistributedDenseMatrix, DistributedDenseMatrixCM> factorsPair= getFactors(inputRowFacFile,
 			inputColFacFile,  tasks, 1, 1, 1, true);
 		DenseMatrix w = *mpi2::env().get<DenseMatrix>(factorsPair.first.blocks()(0,0).var());
 		DenseMatrixCM h = *mpi2::env().get<DenseMatrixCM>(factorsPair.second.blocks()(0,0).var());
+		t.stop();
+		LOG4CXX_INFO(logger, "Total time for loading matrices: " << t);
 		
 		mf_size_type nnz = v.nnz();
 		SparseMatrix::index_array_type& vIndex1 = rowIndexData(v);
@@ -306,7 +309,7 @@ int main(int argc, char* argv[]) {
 		LOG4CXX_INFO(logger, "Initial test loss: " << testLoss(testData));
 
 		// initialize
-		Timer t;
+		
 		StratifiedPsgdRunner stratifiedPsgdRunner (random, permutation, offsets);
 		StratifiedPsgdJob<Update,Regularize> stratifiedPsgdJob(v, w, h, update, regularize, order, tasks);
 		BoldDriver decay(eps0);
