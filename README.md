@@ -1,15 +1,20 @@
 # DSGDpp
 
-This project contains implementations of various parallel algorithms for computing low-rank matrix factorizations. Both shared-memory and shared-nothing (via MPI) implementations are provided. The following algorithms are currently implemented:
+This project contains implementations of various parallel algorithms for computing low-rank matrix factorizations. Both shared-memory and shared-nothing (via MPI) implementations are provided. 
 
-- DSGD (Gemulla et al 2011)
-- DSGD++ (Teflioudi et al 2012) 
-- Asynchronous SGD (Teflioudi et al 2012) 
-- CSGD (Makari et al 2013) 
-- Parallel SGD with locking (Teflioudi et al 2012) 
-- Lock-free parallel SGD (Hogwild) (Niu et al 2011)
-- Alternating least squares (Zhou et al 2008)
-- Non-negative matrix factorization.
+The following algorithms are currently implemented:
+
+|Algorithm|Reference|Shared memory?|Shared nothing?|
+|---|---|:---:|:---:|
+|SGD||||
+|DSGD|[Gemulla et al., 2011](https://dl.acm.org/citation.cfm?id=2020426)|&#10003;|&#10003;|
+|DSGD++|[Teflioudi et al., 2012](http://ieeexplore.ieee.org/document/6413862)|&#10003;|&#10003;|
+|Asynchronous SGD|[Teflioudi et al., 2012](http://ieeexplore.ieee.org/document/6413862)||&#10003;|
+|CSGD|[Makari et al., 2013](https://link.springer.com/article/10.1007/s10115-013-0718-7)|&#10003;||
+|Parallel SGD with locking||&#10003;|
+|Lock-free parallel SGD (Hogwild)|[Niu et al., 2011](https://dl.acm.org/citation.cfm?id=2986537)|&#10003;||
+|Alternating least squares|[Zhou et al., 2008](https://link.springer.com/chapter/10.1007/978-3-540-68880-8_32)|&#10003;|&#10003;|
+|Non-negative matrix factorization|[Lee and Seung, 2001](https://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf)|&#10003;|&#10003;|
 
 ## Quick start
 
@@ -178,38 +183,28 @@ To run a method in a shared-nothing environment, simply prefix the command with 
 | mfsample | Creates a sample of an input matrix (e.g., used for automatic step size selection) |
 | mfprepare | Combines mfsample, mfproject, and mfcreateInitialFactors |
 
-### Citations
+### References
 
-  - F. Makari, C. Teflioudi, R. Gemulla, P. J. Haas, Y. Sismanis
-    
-    *Shared-Memory and Shared-Nothing Stochastic Gradient Descent Algorithms for Matrix Completion.*
-    
-    In KAIS, 2013
-    
+R. Gemulla, E. Nijkamp, P. J. Haas, and Y. Sismanis
+*[Large-Scale Matrix Factorization with Distributed Stochastic Gradient Descent](https://dl.acm.org/citation.cfm?id=2020426)*.
+KDD, 2011
 
-  - C. Teflioudi, F. Makari, R. Gemulla
-    
-    *Distributed Matrix Completion.*
-    
-    In ICDM, 2012.
-    
+D. D. Lee and H. S. Seung
+*[Algorithms for Non-negative Matrix Factorization](https://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf)*.
+NIPS, 2001
 
-  - R. Gemulla, E. Nijkamp, P. J. Haas, Y. Sismanis
-    
-    *Large-Scale Matrix Factorization with Distributed Stochastic Gradient Descent*
-    
-    In KDD, 2011
-    
+F. Makari, C. Teflioudi, R. Gemulla, P. J. Haas, and Y. Sismanis
+*[Shared-Memory and Shared-Nothing Stochastic Gradient Descent Algorithms for Matrix Completion](https://link.springer.com/article/10.1007/s10115-013-0718-7)*.
+KAIS, 2013
 
-  - F. Niu, B. Recht, C. Re, and S. J. Wright, 
-    
-    *Hogwild!: A lock-free approach to parallelizing stochastic gradient descent*
-    
-    In NIPS, 2011
-    
+F. Niu, B. Recht, C. Re, and S. J. Wright
+*[Hogwild!: A lock-free approach to parallelizing stochastic gradient descent](https://dl.acm.org/citation.cfm?id=2986537)*.
+NIPS, 2011
 
-  - Y. Zhou, D. Wilkinson, R. Schreiber, and R. Pan, 
+C. Teflioudi, F. Makari, and R. Gemulla
+*[Distributed Matrix Completion](http://ieeexplore.ieee.org/document/6413862)*.
+ICDM, 2012.
     
-    *Large-scale parallel collaborative filtering for the Netflix Prize*
-    
-    In AAIM, 2008
+Y. Zhou, D. Wilkinson, R. Schreiber and R. Pan
+*[Large-scale parallel collaborative filtering for the Netflix Prize](https://link.springer.com/chapter/10.1007/978-3-540-68880-8_32)*.
+AAIM, 2008
